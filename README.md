@@ -4,6 +4,8 @@ Namae is a parser for human names. It recognizes personal names of various
 cultural backgrounds and tries to split them into their component parts
 (e.g., given and family names, honorifics etc.).
 
+[![Build Status](https://secure.travis-ci.org/inukshuk/namae.png)][Continuous Integration]
+
 Quickstart
 ----------
 1. Install the namae gem (or add it to your Gemfile):
