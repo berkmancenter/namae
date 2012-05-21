@@ -4,4 +4,4 @@ rvm:
   - 1.9.3
   - jruby
   - rbx
-before_install: rake racc
+after_install: rake racc
