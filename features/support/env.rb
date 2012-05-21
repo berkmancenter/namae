@@ -7,6 +7,8 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 
+require 'simplecov'
+
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../../lib')
 require 'namae'
 
