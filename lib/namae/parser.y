@@ -2,7 +2,7 @@
 
 class Namae::Parser
 
-token COMMA UWORD LWORD PWORD AND
+token COMMA UWORD LWORD PWORD NICK AND
 
 expect 0
 
@@ -20,10 +20,18 @@ rule
        {
          result = Name.new(:given => val[0], :family => val[1])
        }
+       | u_words NICK last
+       {
+         result = Name.new(:given => val[0], :nick => val[1], :family => val[2])
+       }
+       | u_words NICK von last
+       {
+         result = Name.new(:given => val[0], :nick => val[1],
+           :particle => val[2], :family => val[3])
+       }
        | u_words von last
        {
-         result = Name.new(:given => val[0], :particle => val[1],
-           :family => val[2])
+         result = Name.new(:given => val[0], :particle => val[1], :family => val[2])
        }
        | von last
        {
@@ -62,7 +70,7 @@ rule
 
   words : word
         | words word { result = val.join(' ') }
-
+  
   opt_words : /* empty */ | words
 
   word : LWORD | UWORD | PWORD
@@ -81,6 +89,7 @@ require 'strscan'
   def initialize
     @input, @options = StringScanner.new(''), {
       :debug => false,
+      :comma => ',',
       :separator => /\s+(?:and|&)\s+/i
     }
   end
@@ -93,6 +102,10 @@ require 'strscan'
     options[:separator]
   end
   
+  def comma
+    options[:comma]
+  end
+  
   def parse(input)
     parse!(input)
   rescue => e
@@ -102,7 +115,7 @@ require 'strscan'
   
   def parse!(string)
     @yydebug = debug?
-    input.string = string
+    input.string = string.strip
     do_parse
   end
     
@@ -116,12 +129,21 @@ require 'strscan'
       [:AND, nil]
     when input.scan(/\s*,\s*/)
       [:COMMA, nil]
-    when input.scan(/\w+/)
-      [:PWORD, input.matched]
+    when input.scan(/\s+/)
+      next_token
+    when input.scan(/\p{Upper}[^\s#{comma}]*/)
+      [:UWORD, input.matched]
+    when input.scan(/\p{Lower}[^\s#{comma}]*/)
+      [:LWORD, input.matched]
+    when input.scan(/(?<quote>['"]).+\k<quote>/)
+      [:NICK, input.matched[1...-1]]
     else
       raise ArgumentError,
         "Failed to parse name #{input.string.inspect}: unmatched data at offset #{input.pos}"
     end
+  end
+  
+  def match_word(word)
   end
   
   def on_error(tid, value, stack)

@@ -32,6 +32,13 @@ module Namae
             parser.send(:next_token).should == [:COMMA, nil]
           end
         end
+        
+        describe 'when the next input is " \'foo bar\' "' do
+          before { parser.send(:input).string = " 'foo bar' " }
+          it 'returns a NICK token' do
+            parser.send(:next_token).should == [:NICK, 'foo bar']
+          end
+        end
       end
       
       describe '#parse!' do
@@ -51,6 +58,10 @@ module Namae
           
           it 'parses given and family part name in "Ichiro Suzuki"' do
             parser.parse!('Ichiro Suzuki')[0].values_at(:given, :family).should == %w{Ichiro Suzuki}
+          end
+          
+          it 'parses given, nick and family part name in "Yukihiro \'Matz\' Matsumoto"' do
+            parser.parse!("Yukihiro 'Matz' Matsumoto")[0].values_at(:given, :family, :nick).should == %w{Yukihiro Matsumoto Matz}
           end
         end
       end
