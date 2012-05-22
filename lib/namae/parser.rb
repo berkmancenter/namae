@@ -238,7 +238,7 @@ module_eval(<<'.,.,', 'parser.y', 12)
 
 module_eval(<<'.,.,', 'parser.y', 16)
   def _reduce_4(val, _values, result)
-             result = Name.new(:family => val[0])
+             result = Name.new(:given => val[0])
        
     result
   end

@@ -17,5 +17,22 @@ module Namae
       
     end
     
+    describe '#values_at' do
+      it 'returns an array with the given values' do
+        Name.new(:family => 'foo').values_at(:family).should == ['foo']
+      end
+
+      it 'returns an array with the given values' do
+        Name.new(:family => 'foo').values_at(:family).should == ['foo']
+      end
+      
+    end
+    
+    describe '#inspect' do
+      it 'returns the name as a string' do
+        Name.new(:given => 'Ichiro').inspect.should == '#<Name given="Ichiro">'
+      end
+    end
+    
   end
 end

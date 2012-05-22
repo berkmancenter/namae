@@ -14,7 +14,7 @@ rule
 
   name : word
        {
-         result = Name.new(:family => val[0])
+         result = Name.new(:given => val[0])
        }
        | u_words word
        {

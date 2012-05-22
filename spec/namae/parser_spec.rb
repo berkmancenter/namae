@@ -40,7 +40,18 @@ module Namae
         end
         
         it 'returns a list of names' do
-          parser.parse!('foo').map(&:class).uniq.should == [Name]
+          parser.parse!('foo')[0].should be_a(Name)
+        end
+        
+        describe 'when parsing a single name' do
+          
+          it 'treats "Ichiro" as a given name' do
+            parser.parse!('Ichiro')[0].given.should == 'Ichiro'
+          end
+          
+          it 'parses given and family part name in "Ichiro Suzuki"' do
+            parser.parse!('Ichiro Suzuki')[0].values_at(:given, :family).should == %w{Ichiro Suzuki}
+          end
         end
       end
       
