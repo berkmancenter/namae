@@ -13,9 +13,9 @@ Feature: Parse BibTeX-style names
     | name            | first      | von        | last    | jr |
     | AA BB           | AA         |            | BB      |    |
     | AA BB CC        | AA BB      |            | CC      |    |
-    | AA              |            |            | AA      |    |
+#   | AA              |            |            | AA      |    |
     | AA bb           | AA         |            | bb      |    |
-    | aa              |            |            | aa      |    |
+#   | aa              |            |            | aa      |    |
     | aa bb           |            | aa         | bb      |    |
     | aa BB           |            | aa         | BB      |    |
     | AA bb CC        | AA         | bb         | CC      |    |
@@ -56,15 +56,7 @@ Feature: Parse BibTeX-style names
 
   @names 
   Scenarios: Decoret further remarks
-    | name                              | first                | von            | last                    | jr |
-    # | Paul \'Emile Victor               | Paul \'Emile        |                | Victor                  |    |
-    # | Paul {\'E}mile Victor             | Paul {\'E}mile      |                | Victor                  |    |
-    # | Paul \'emile Victor               | Paul \'emile        |                | Victor                  |    |
-    # | Paul {\'e}mile Victor             | Paul {\'e}mile      |                | Victor                  |    |
-    # | Victor, Paul \'Emile              | Paul \'Emile        |                | Victor                  |    |
-    # | Victor, Paul {\'E}mile            | Paul {\'E}mile      |                | Victor                  |    |
-    # | Victor, Paul \'emile              | Paul \'emile        |                | Victor                  |    |
-    # | Victor, Paul {\'e}mile            | Paul {\'e}mile      |                | Victor                  |    |
+    | name                               | first                | von            | last                    | jr |
     | Dominique Galouzeau de Villepin    | Dominique Galouzeau  | de             | Villepin                |    |
     | Dominique {G}alouzeau de Villepin  | Dominique            | {G}alouzeau de | Villepin                |    |
     | Galouzeau {de} Villepin, Dominique | Dominique            |                | Galouzeau {de} Villepin |    |
@@ -79,8 +71,8 @@ Feature: Parse BibTeX-style names
     | {{von} Beethoven}, Ludwig         | Ludwig                  |                | {{von} Beethoven}              |     |
     | John {}Paul Jones                 | John {}Paul             |                | Jones                          |     |
     | Ford, Jr., Henry                  | Henry                   |                | Ford                           | Jr. |
-     | Brinch Hansen, Per                | Per                     |                | Brinch Hansen                  |     |
-     | {Barnes and Noble, Inc.}          |                         |                | {Barnes and Noble, Inc.}       |     |
-     | {Barnes and} {Noble, Inc.}        | {Barnes and}            |                | {Noble, Inc.}                  |     |
-     | {Barnes} {and} {Noble,} {Inc.}    | {Barnes} {and} {Noble,} |                | {Inc.}                         |     |
-     | Charles Louis Xavier Joseph de la Vallee Poussin | Charles Louis Xavier Joseph | de la | Vallee Poussin       |     |
+    | Brinch Hansen, Per                | Per                     |                | Brinch Hansen                  |     |
+    | {Barnes and Noble, Inc.}          |                         |                | {Barnes and Noble, Inc.}       |     |
+    | {Barnes and} {Noble, Inc.}        | {Barnes and}            |                | {Noble, Inc.}                  |     |
+    | {Barnes} {and} {Noble,} {Inc.}    | {Barnes} {and} {Noble,} |                | {Inc.}                         |     |
+    | Charles Louis Xavier Joseph de la Vallee Poussin | Charles Louis Xavier Joseph | de la | Vallee Poussin       |     |

@@ -63,6 +63,15 @@ module Namae
           it 'parses given, nick and family part name in "Yukihiro \'Matz\' Matsumoto"' do
             parser.parse!("Yukihiro 'Matz' Matsumoto")[0].values_at(:given, :family, :nick).should == %w{Yukihiro Matsumoto Matz}
           end
+
+          it 'parses given, nick and family part name in \'Yukihiro "Matz" Matsumoto\'' do
+            parser.parse!('Yukihiro "Matz" Matsumoto')[0].values_at(:given, :family, :nick).should == %w{Yukihiro Matsumoto Matz}
+          end
+          
+          it 'parses given and family name in "Poe, Edgar A."' do
+            parser.parse!('Poe, Edgar A.')[0].values_at(:given, :family).should == ['Edgar A.', 'Poe']
+          end
+          
         end
       end
       
