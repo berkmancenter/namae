@@ -2,7 +2,7 @@ source :rubygems
 
 group :test do
   gem 'rspec', '~> 2.10.0'
-  gem 'rake', '~> 0.9'
+  gem 'jeweler', '~> 1.8.3'
 end
 
 group :development do
@@ -13,7 +13,6 @@ group :development do
   gem 'simplecov', :require => false
   gem 'cucumber', '~> 1.2.0'
   gem 'ZenTest', '~> 4.8.0'
-  gem 'jeweler', '~> 1.8.3'
 end
 
 group :debug do
