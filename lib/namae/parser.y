@@ -133,7 +133,7 @@ require 'strscan'
       next_token
     when input.scan(/[[:upper:]][^\s#{comma}]*/)
       [:UWORD, input.matched]
-    when input.scan(/[[:lower]][^\s#{comma}]*/)
+    when input.scan(/[[:lower:]][^\s#{comma}]*/)
       [:LWORD, input.matched]
     when input.scan(/('[^'\n]+')|("[^"\n]+")/)
       [:NICK, input.matched[1...-1]]
