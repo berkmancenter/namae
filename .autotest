@@ -1,10 +1,10 @@
 require 'bundler'
 begin
   if RUBY_PLATFORM =~ /darwin/
-    Bundler.setup(:default, :development, :debug, :osx)
+    Bundler.setup(:default, :development, :debug, :test, :osx)
     require 'autotest/fsevent'  
   else
-    Bundler.setup(:default, :development, :debug)
+    Bundler.setup(:default, :development, :debug, :test)
   end
 rescue Bundler::BundlerError => e
   $stderr.puts e.message
