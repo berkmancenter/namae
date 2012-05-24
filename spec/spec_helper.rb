@@ -5,7 +5,11 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'namae'
 
-require 'debugger'
+begin
+  require 'debugger'
+rescue LoadError
+  # skip
+end
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.

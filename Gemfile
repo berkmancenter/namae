@@ -1,7 +1,7 @@
 source :rubygems
 
 group :development do
-  gem 'racc', '~> 1.4.8'
+  gem 'racc', '~> 1.4.8', :platform => [:mri_19, :mri_18, :rbx]
   gem 'yard', '~> 0.7'
   gem 'rdoc', '~> 3.12'
   gem 'bundler', '~> 1.1'

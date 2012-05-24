@@ -67,7 +67,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 84)
       [:UWORD, input.matched]
     when input.scan(/\p{Lower}[^\s#{comma}]*/)
       [:LWORD, input.matched]
-    when input.scan(/(?<quote>['"]).+\k<quote>/)
+    when input.scan(/('[^'\n]+')|("[^"\n]+")/)
       [:NICK, input.matched[1...-1]]
     else
       raise ArgumentError,
