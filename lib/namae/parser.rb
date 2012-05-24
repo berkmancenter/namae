@@ -65,7 +65,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 84)
       next_token
     when input.scan(/[[:upper:]][^\s#{comma}]*/)
       [:UWORD, input.matched]
-    when input.scan(/[[:lower]][^\s#{comma}]*/)
+    when input.scan(/[[:lower:]][^\s#{comma}]*/)
       [:LWORD, input.matched]
     when input.scan(/('[^'\n]+')|("[^"\n]+")/)
       [:NICK, input.matched[1...-1]]
