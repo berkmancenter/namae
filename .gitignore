@@ -31,3 +31,5 @@ pkg
 
 # For rubinius:
 *.rbc
+.rbx
+

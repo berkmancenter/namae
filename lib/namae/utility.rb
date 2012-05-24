@@ -12,7 +12,7 @@ module Namae
   # @see parse!
   #
   # @param names [String] the name or names to be parsed
-  # @returns [Array] the list of parsed names
+  # @return [Array] the list of parsed names
   def parse(names)
     Parser.instance.parse(names)
   end

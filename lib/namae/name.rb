@@ -13,15 +13,23 @@ module Namae
   class Name < Struct.new :family, :given, :suffix, :particle,
     :dropping_particle, :nick
 
+    # rbx compatibility
+    @parts = members.map(&:to_sym).freeze
+
+    class << self
+      attr_reader :parts
+    end
+    
+    
     # @param attributes [Hash] the individual parts of the name
     # @example
     #   Name.new(:family => 'Matsumoto')
     def initialize(attributes = {})
-      super(*attributes.values_at(*Name.members))
+      super(*attributes.values_at(*Name.parts))
     end
   
 
-    # Returns true if all the name components are nil.
+    # True if all the name components are nil.
     def empty?
       values.compact.empty?
     end
@@ -39,7 +47,7 @@ module Namae
     # @see Struct#values_at
     # @return [Array] the list of values
     def values_at(*arguments)
-      super(*arguments.flatten.map { |k| k.is_a?(Symbol) ? Name.members.index(k) : k})
+      super(*arguments.flatten.map { |k| k.is_a?(Symbol) ? Name.parts.index(k) : k })
     end
     
     
