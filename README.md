@@ -23,6 +23,27 @@ Quickstart
         names[0].nick #=> Matz
         names[0].given #=> Yukihiro
 
+Rationale
+---------
+Parsing human names is at once too easy and too hard. When working in the
+confines of a single language or culture it is often a trivial task that
+does not warrant a dedicated software package; when working across different
+cultures, languages, or scripts, however, it may quickly become unrealistic
+to devise a satisfying, one-size-fits-all solution. In languages like
+Japanese or Chinese, for instance, the issue of word segmentation alone is
+probably more difficult than name parsing itself.
+
+Having said that, Namae is based on the rules used by BibTeX to format names
+and can therefore be used to parse names of most languages using latin
+script with the long-time goal to support as many languages and scripts as
+possible without the need for sophisticated or large dictionary based
+language-detection or word segmentation features.
+
+For further reading, see the W3C's primer on
+[Personal Names Around the World](http://www.w3.org/International/questions/qa-personal-names).
+
+
+
 Copyright
 ---------
 Copyright (c) 2012 President and Fellows of Harvard College.
