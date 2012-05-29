@@ -23,13 +23,30 @@ Quickstart
         names[0].nick #=> Matz
         names[0].given #=> Yukihiro
 
-Format
-------
-Namae recognizes names in two basic formats: display-order and sort-order.
-For example, you could write Alan Turing's name in display-order:
+Format and Examples
+-------------------
+Namae recognizes names in a wide variety of two basic formats, internally
+referred to as display-order and sort-order. For example, the following
+names are written in display-order:
 
-    Alan M. Turing
+    Namae.parse 'Charles Babbage'
+    #-> [#<Name family="Babbage" given="Charles">]]
 
+    Namae.parse 'Mr. Alan M. Turing'
+    #-> [#<Name family="Turing" given="Alan M." appellation="Mr.">]
+
+    Namae.parse 'Yukihiro "Matz" Matsumoto'
+    #-> [#<Name family="Matsumoto" given="Yukihiro" nick="Matz">]
+
+    Namae.parse 'Augusta Ada King and George Gordon Byron'
+    #-> [#<Name family="King" given="Augusta Ada">, #<Name family="Byron" given="George Gordon">]
+
+    Namae.parse 'Sir Isaac Newton'
+    #-> [#<Name family="Newton" given="Isaac" title="Sir">]
+
+    Namae.parse 'Prof. Donald Ervin Knuth'
+		#-> [#<Name family="Knuth" given="Donald Ervin" title="Prof.">]
+		
 Or in sort-order:
 
     Turing, Alan M.

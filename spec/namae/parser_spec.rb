@@ -26,6 +26,13 @@ module Namae
           end
         end
 
+        describe 'when the next input is " & "' do
+          before { parser.send(:input).string = ' & ' }
+          it 'returns an AND token' do
+            parser.send(:next_token).should == [:AND, nil]
+          end
+        end
+
         describe 'when the next input is " , "' do
           before { parser.send(:input).string = ' , ' }
           it 'returns a COMMA token' do
@@ -39,6 +46,16 @@ module Namae
             parser.send(:next_token).should == [:NICK, 'foo bar']
           end
         end
+        
+        %w{Mr. Mr Mrs. Ms Herr Frau Miss}.each do |appellation|
+          describe "the next token is #{appellation.inspect}" do
+            before { parser.send(:input).string = appellation }
+            it 'returns an APPELLATION token' do
+              parser.send(:next_token).should == [:APPELLATION, appellation]
+            end
+          end
+        end
+        
       end
       
       describe '#parse!' do
@@ -70,6 +87,12 @@ module Namae
           
           it 'parses given and family name in "Poe, Edgar A."' do
             parser.parse!('Poe, Edgar A.')[0].values_at(:given, :family).should == ['Edgar A.', 'Poe']
+          end
+          
+          %w{Mr. Mr Mrs. Ms Herr Frau Miss}.each do |appellation|
+            it "recognizes #{appellation.inspect} as an appellation" do
+              parser.parse!([appellation, 'Edgar A. Poe'].join(' '))[0].appellation.should == appellation
+            end
           end
           
         end

@@ -4,7 +4,7 @@ Feature: Parse BibTeX-style names
 
   Scenario Outline: Name splitting
     When I parse the name "<name>"
-    Then the parts should be:
+    Then the BibTeX parts should be:
       |  first  |  von  |  last  |  jr  |
       | <first> | <von> | <last> | <jr> |
 

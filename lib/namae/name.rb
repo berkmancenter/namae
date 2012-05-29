@@ -11,7 +11,7 @@ module Namae
   #     name.given #=> Yukihiro
   #
   class Name < Struct.new :family, :given, :suffix, :particle,
-    :dropping_particle, :nick
+    :dropping_particle, :nick, :appellation, :title
 
     # rbx compatibility
     @parts = members.map(&:to_sym).freeze
@@ -19,7 +19,7 @@ module Namae
     class << self
       attr_reader :parts
     end
-    
+
     
     # @param attributes [Hash] the individual parts of the name
     # @example
