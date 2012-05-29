@@ -23,6 +23,20 @@ Quickstart
         names[0].nick #=> Matz
         names[0].given #=> Yukihiro
 
+Format
+------
+Namae recognizes names in two basic formats: display-order and sort-order.
+For example, you could write Alan Turing's name in display-order:
+
+    Alan M. Turing
+
+Or in sort-order:
+
+    Turing, Alan M.
+
+Typically, names in sort-order will be easier to parse.
+
+
 Rationale
 ---------
 Parsing human names is at once too easy and too hard. When working in the
@@ -41,7 +55,6 @@ language-detection or word segmentation features.
 
 For further reading, see the W3C's primer on
 [Personal Names Around the World](http://www.w3.org/International/questions/qa-personal-names).
-
 
 
 Copyright
