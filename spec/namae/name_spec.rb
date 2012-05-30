@@ -28,6 +28,24 @@ module Namae
       
     end
     
+    describe '#merge' do
+      it 'merges the attributes in the given hash into the name' do
+        Name.new.merge(:family => 'foo').family.should == 'foo'
+      end
+
+      it 'merges the attributes in the given name into the name' do
+        Name.new.merge(Name.new(:family => 'foo')).family.should == 'foo'
+      end
+      
+      it 'ignores unknown attributes' do
+        Name.new.merge(:foo => 'bar').should be_empty
+      end
+      
+      it 'ignores nil values' do
+        Name.new(:family => 'foo').merge(:family => nil).family.should == 'foo'
+      end
+    end
+    
     describe '#inspect' do
       it 'returns the name as a string' do
         Name.new(:given => 'Ichiro').inspect.should == '#<Name given="Ichiro">'

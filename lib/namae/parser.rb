@@ -12,7 +12,7 @@ require 'strscan'
 module Namae
   class Parser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 95)
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
 
   include Singleton
     
@@ -22,7 +22,9 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 95)
     @input, @options = StringScanner.new(''), {
       :debug => false,
       :comma => ',',
-      :separator => /\s*(\band\b|\&)\s*/i
+      :separator => /\s*(\band\b|\&)\s*/i,
+      :title => /\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
+      :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
   
@@ -36,6 +38,14 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 95)
   
   def comma
     options[:comma]
+  end
+
+  def title
+    options[:title]
+  end
+
+  def appellation
+    options[:appellation]
   end
   
   def parse(input)
@@ -63,9 +73,9 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 95)
       [:COMMA, nil]
     when input.scan(/\s+/)
       next_token
-    when input.scan(/\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i)
+    when input.scan(title)
       [:TITLE, input.matched.strip]
-    when input.scan(/\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i)
+    when input.scan(appellation)
       [:APPELLATION, input.matched.strip]
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{comma}]*/)
       [:UWORD, input.matched]
@@ -93,66 +103,62 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 95)
 ##### State transition tables begin ###
 
 racc_action_table = [
-   -32,    15,   -20,   -20,   -34,   -20,   -33,   -32,    16,   -20,
-   -20,   -34,   -32,   -33,   -20,    13,    11,    14,    53,   -32,
-     5,     6,    13,    11,    14,    55,    42,     5,     6,    13,
-    27,    14,    25,    13,    27,    14,    25,    21,    30,    22,
-    49,    48,    50,    21,    30,    22,    21,    39,    22,    49,
-    48,    50,    21,    30,    22,    49,    48,    50,    21,    20,
-    22,    21,    43,    22,    49,    48,    50,    49,    48,    50,
-    21,    30,    22,    21,    20,    22,    21,    33,    22,    21,
-    30,    22,    32 ]
+   -34,    16,   -22,   -36,   -22,   -35,   -22,   -34,    17,   -22,
+   -36,   -22,   -35,   -34,    53,   -22,    14,    12,    15,    55,
+   -34,     7,     8,    14,    12,    15,    42,    33,     7,     8,
+    14,    22,    15,    24,    14,    22,    15,    24,    30,    28,
+    31,    30,    28,    31,    49,    48,    50,    30,    39,    31,
+    49,    48,    50,    49,    48,    50,    30,    28,    31,    30,
+    43,    31,    49,    48,    50,    30,    28,    31,    49,    48,
+    50,    14,    22,    15,    30,    32,    31,    30,    28,    31 ]
 
 racc_action_check = [
-    27,     1,    39,    30,    14,    30,    13,    27,     1,    39,
-    30,    14,    11,    13,    11,     0,     0,     0,    41,    11,
-     0,     0,    16,    16,    16,    45,    29,    16,    16,     8,
-     8,     8,     8,    18,    18,    18,    18,    26,    26,    26,
-    55,    55,    55,    19,    19,    19,    25,    25,    25,    53,
-    53,    53,     9,     9,     9,    47,    47,    47,     6,     6,
-     6,    31,    31,    31,    32,    32,    32,    42,    42,    42,
-    38,    38,    38,     5,     5,     5,    40,    15,    40,    35,
-    35,    35,    10 ]
+    22,     1,    39,    15,    28,    14,    28,    22,     1,    39,
+    15,    28,    14,    12,    41,    12,     0,     0,     0,    45,
+    12,     0,     0,    17,    17,    17,    27,    16,    17,    17,
+    20,    20,    20,    20,     9,     9,     9,     9,    25,    25,
+    25,    21,    21,    21,    55,    55,    55,    24,    24,    24,
+    53,    53,    53,    47,    47,    47,    10,    10,    10,    29,
+    29,    29,    32,    32,    32,    35,    35,    35,    42,    42,
+    42,     5,     5,     5,    40,    11,    40,    38,    38,    38 ]
 
 racc_action_pointer = [
-    12,     1,   nil,   nil,   nil,    70,    55,   nil,    26,    49,
-    80,    12,   nil,     6,     4,    77,    19,   nil,    30,    40,
-   nil,   nil,   nil,   nil,   nil,    43,    34,     0,   nil,    24,
-     3,    58,    61,   nil,   nil,    76,   nil,   nil,    67,     2,
-    73,    16,    64,   nil,   nil,    23,   nil,    52,   nil,   nil,
-   nil,   nil,   nil,    46,   nil,    37,   nil,   nil,   nil ]
+    13,     1,   nil,   nil,   nil,    68,   nil,   nil,   nil,    31,
+    53,    73,    13,   nil,     5,     3,    27,    20,   nil,   nil,
+    27,    38,     0,   nil,    44,    35,   nil,    24,     4,    56,
+   nil,   nil,    59,   nil,   nil,    62,   nil,   nil,    74,     2,
+    71,    12,    65,   nil,   nil,    17,   nil,    50,   nil,   nil,
+   nil,   nil,   nil,    47,   nil,    41,   nil,   nil,   nil ]
 
 racc_action_default = [
-    -1,   -35,    -2,    -4,    -5,   -35,   -35,    -8,   -21,   -35,
-   -35,   -17,   -24,   -26,   -27,   -35,   -35,    -6,   -35,   -35,
-   -17,   -26,   -27,    -7,    -9,   -35,   -35,   -17,   -25,   -13,
-   -18,   -21,   -30,    59,    -3,   -35,   -13,   -10,   -35,   -17,
-   -21,   -12,   -30,   -19,   -14,   -22,   -28,   -31,   -32,   -33,
-   -34,   -12,   -11,   -30,   -15,   -30,   -29,   -16,   -23 ]
+    -1,   -37,    -2,    -4,    -5,   -37,    -8,    -9,   -10,   -23,
+   -37,   -37,   -19,   -26,   -28,   -29,   -37,   -37,    -6,    -7,
+   -37,   -37,   -19,   -11,   -37,   -37,   -27,   -15,   -20,   -23,
+   -28,   -29,   -32,    59,    -3,   -37,   -15,   -12,   -37,   -19,
+   -23,   -14,   -32,   -21,   -16,   -24,   -30,   -33,   -34,   -35,
+   -36,   -14,   -13,   -32,   -17,   -32,   -31,   -18,   -25 ]
 
 racc_goto_table = [
-     3,    28,    44,    29,    58,     2,    17,    23,    24,     8,
-     1,    28,    54,    36,    18,    18,     3,   nil,    24,    37,
-    41,    34,   nil,    57,    28,     8,   nil,   nil,   nil,    51,
-   nil,   nil,    52,    28,    40,    19,    19,   nil,    26,   nil,
-   nil,   nil,   nil,   nil,   nil,   nil,   nil,    56,    35,   nil,
-   nil,   nil,   nil,   nil,   nil,    38 ]
+     3,    26,    19,    44,    58,    18,     1,   nil,    27,    23,
+     9,     2,    26,    54,   nil,    20,   nil,     3,   nil,    36,
+    23,    26,    37,    41,    57,    21,   nil,     9,    34,    25,
+   nil,   nil,    26,    51,    40,   nil,    52,   nil,   nil,   nil,
+    35,   nil,   nil,   nil,    38,   nil,   nil,    56 ]
 
 racc_goto_check = [
-     3,    11,     9,     7,    10,     2,     4,     4,     3,     6,
-     1,    11,     9,     7,     6,     6,     3,   nil,     3,     7,
-     7,     2,   nil,     9,    11,     6,   nil,   nil,   nil,     7,
-   nil,   nil,     7,    11,     6,     8,     8,   nil,     8,   nil,
-   nil,   nil,   nil,   nil,   nil,   nil,   nil,     3,     8,   nil,
-   nil,   nil,   nil,   nil,   nil,     8 ]
+     3,    12,     4,    10,    11,     3,     1,   nil,     8,     3,
+     7,     2,    12,    10,   nil,     7,   nil,     3,   nil,     8,
+     3,    12,     8,     8,    10,     9,   nil,     7,     2,     9,
+   nil,   nil,    12,     8,     7,   nil,     8,   nil,   nil,   nil,
+     9,   nil,   nil,   nil,     9,   nil,   nil,     3 ]
 
 racc_goto_pointer = [
-   nil,    10,     5,     0,     1,   nil,     9,    -6,    30,   -30,
-   -51,    -7,   nil ]
+   nil,     6,    11,     0,    -3,   nil,   nil,    10,    -2,    20,
+   -29,   -51,    -8,   nil ]
 
 racc_goto_default = [
-   nil,   nil,   nil,    46,     4,     7,    31,    10,     9,   nil,
-    45,    12,    47 ]
+   nil,   nil,   nil,    46,     4,     5,     6,    29,    11,    10,
+   nil,    45,    13,    47 ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
@@ -164,34 +170,36 @@ racc_reduce_table = [
   2, 12, :_reduce_6,
   2, 12, :_reduce_7,
   1, 12, :_reduce_none,
-  2, 14, :_reduce_9,
-  3, 14, :_reduce_10,
-  4, 14, :_reduce_11,
+  1, 15, :_reduce_9,
+  1, 15, :_reduce_10,
+  2, 14, :_reduce_11,
   3, 14, :_reduce_12,
-  2, 14, :_reduce_13,
-  3, 15, :_reduce_14,
-  4, 15, :_reduce_15,
-  5, 15, :_reduce_16,
+  4, 14, :_reduce_13,
+  3, 14, :_reduce_14,
+  2, 14, :_reduce_15,
+  3, 16, :_reduce_16,
+  4, 16, :_reduce_17,
+  5, 16, :_reduce_18,
+  1, 19, :_reduce_none,
+  2, 19, :_reduce_20,
+  3, 19, :_reduce_21,
   1, 18, :_reduce_none,
-  2, 18, :_reduce_18,
-  3, 18, :_reduce_19,
+  1, 18, :_reduce_none,
+  1, 20, :_reduce_24,
+  3, 20, :_reduce_25,
   1, 17, :_reduce_none,
-  1, 17, :_reduce_none,
-  1, 19, :_reduce_22,
-  3, 19, :_reduce_23,
-  1, 16, :_reduce_none,
-  2, 16, :_reduce_25,
-  1, 21, :_reduce_none,
-  1, 21, :_reduce_none,
+  2, 17, :_reduce_27,
   1, 22, :_reduce_none,
-  2, 22, :_reduce_29,
-  0, 20, :_reduce_none,
-  1, 20, :_reduce_none,
+  1, 22, :_reduce_none,
+  1, 23, :_reduce_none,
+  2, 23, :_reduce_31,
+  0, 21, :_reduce_none,
+  1, 21, :_reduce_none,
   1, 13, :_reduce_none,
   1, 13, :_reduce_none,
   1, 13, :_reduce_none ]
 
-racc_reduce_n = 35
+racc_reduce_n = 37
 
 racc_shift_n = 59
 
@@ -243,6 +251,7 @@ Racc_token_to_s_table = [
   "name",
   "word",
   "display_order",
+  "honorific",
   "sort_order",
   "u_words",
   "last",
@@ -288,44 +297,54 @@ module_eval(<<'.,.,', 'parser.y', 14)
 
 # reduce 5 omitted
 
-module_eval(<<'.,.,', 'parser.y', 18)
+module_eval(<<'.,.,', 'parser.y', 16)
   def _reduce_6(val, _values, result)
-             val[1].appellation = val[0]
-         result = val[1]
-       
+     result = val[0].merge(:family => val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 23)
+module_eval(<<'.,.,', 'parser.y', 17)
   def _reduce_7(val, _values, result)
-             val[1].title = val[0]
-         result = val[1]
-       
+     result = val[1].merge(val[0]) 
     result
   end
 .,.,
 
 # reduce 8 omitted
 
-module_eval(<<'.,.,', 'parser.y', 30)
+module_eval(<<'.,.,', 'parser.y', 20)
   def _reduce_9(val, _values, result)
+     result = Name.new(:appellation => val[0]) 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 21)
+  def _reduce_10(val, _values, result)
+     result = Name.new(:title => val[0]) 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 25)
+  def _reduce_11(val, _values, result)
              result = Name.new(:given => val[0], :family => val[1])
        
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 34)
-  def _reduce_10(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 29)
+  def _reduce_12(val, _values, result)
              result = Name.new(:given => val[0], :nick => val[1], :family => val[2])
        
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 38)
-  def _reduce_11(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 33)
+  def _reduce_13(val, _values, result)
              result = Name.new(:given => val[0], :nick => val[1],
            :particle => val[2], :family => val[3])
        
@@ -333,8 +352,8 @@ module_eval(<<'.,.,', 'parser.y', 38)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 43)
-  def _reduce_12(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 38)
+  def _reduce_14(val, _values, result)
              result = Name.new(:given => val[0], :particle => val[1],
           :family => val[2])
        
@@ -342,16 +361,16 @@ module_eval(<<'.,.,', 'parser.y', 43)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 48)
-  def _reduce_13(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 43)
+  def _reduce_15(val, _values, result)
              result = Name.new(:particle => val[0], :family => val[1])
        
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 53)
-  def _reduce_14(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 48)
+  def _reduce_16(val, _values, result)
              result = Name.new(:family => val[0], :suffix => val[2][0],
            :given => val[2][1])
        
@@ -359,8 +378,8 @@ module_eval(<<'.,.,', 'parser.y', 53)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 58)
-  def _reduce_15(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 53)
+  def _reduce_17(val, _values, result)
              result = Name.new(:particle => val[0], :family => val[1],
            :suffix => val[3][0], :given => val[3][1])
        
@@ -368,8 +387,8 @@ module_eval(<<'.,.,', 'parser.y', 58)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 63)
-  def _reduce_16(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 58)
+  def _reduce_18(val, _values, result)
              result = Name.new(:particle => val[0,2].join(' '), :family => val[2],
            :suffix => val[4][0], :given => val[4][1])
        
@@ -377,71 +396,71 @@ module_eval(<<'.,.,', 'parser.y', 63)
   end
 .,.,
 
-# reduce 17 omitted
+# reduce 19 omitted
+
+module_eval(<<'.,.,', 'parser.y', 64)
+  def _reduce_20(val, _values, result)
+     result = val.join(' ') 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 65)
+  def _reduce_21(val, _values, result)
+     result = val.join(' ') 
+    result
+  end
+.,.,
+
+# reduce 22 omitted
+
+# reduce 23 omitted
 
 module_eval(<<'.,.,', 'parser.y', 69)
-  def _reduce_18(val, _values, result)
-     result = val.join(' ') 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.y', 70)
-  def _reduce_19(val, _values, result)
-     result = val.join(' ') 
-    result
-  end
-.,.,
-
-# reduce 20 omitted
-
-# reduce 21 omitted
-
-module_eval(<<'.,.,', 'parser.y', 74)
-  def _reduce_22(val, _values, result)
+  def _reduce_24(val, _values, result)
      result = [nil,val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 75)
-  def _reduce_23(val, _values, result)
-     result = [val[0],val[2]] 
-    result
-  end
-.,.,
-
-# reduce 24 omitted
-
-module_eval(<<'.,.,', 'parser.y', 78)
+module_eval(<<'.,.,', 'parser.y', 70)
   def _reduce_25(val, _values, result)
-     result = val.join(' ') 
+     result = [val[0],val[2]] 
     result
   end
 .,.,
 
 # reduce 26 omitted
 
-# reduce 27 omitted
-
-# reduce 28 omitted
-
-module_eval(<<'.,.,', 'parser.y', 83)
-  def _reduce_29(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 73)
+  def _reduce_27(val, _values, result)
      result = val.join(' ') 
     result
   end
 .,.,
 
+# reduce 28 omitted
+
+# reduce 29 omitted
+
 # reduce 30 omitted
 
-# reduce 31 omitted
+module_eval(<<'.,.,', 'parser.y', 78)
+  def _reduce_31(val, _values, result)
+     result = val.join(' ') 
+    result
+  end
+.,.,
 
 # reduce 32 omitted
 
 # reduce 33 omitted
 
 # reduce 34 omitted
+
+# reduce 35 omitted
+
+# reduce 36 omitted
 
 def _reduce_none(val, _values, result)
   val[0]

@@ -34,7 +34,23 @@ module Namae
       values.compact.empty?
     end
 
+		# Merges the name with the passed-in name or hash.
+		#
+		# @param other [Name,Hash] the other name or hash
+		# @return [Name] self
+		def merge(other)
+			raise ArgumentError, "failed to merge #{other.class} into Name" unless
+				other.respond_to?(:each_pair)
+				
+			other.each_pair do |part, value|
+				writer = "#{part}="
+				send(writer, value) if !value.nil? && respond_to?(writer)
+			end
+			
+			self
+		end
     
+
     # @overload values_at(selector, ... )
     #   Returns an array containing the elements in self corresponding to
     #   the given selector(s). The selectors may be either integer indices,

@@ -14,18 +14,13 @@ rule
 
   name : word            { result = Name.new(:given => val[0]) }
        | display_order
-       | APPELLATION display_order
-       {
-         val[1].appellation = val[0]
-         result = val[1]
-       }
-       | TITLE display_order
-       {
-         val[1].title = val[0]
-         result = val[1]
-       }
+       | honorific word          { result = val[0].merge(:family => val[1]) }
+       | honorific display_order { result = val[1].merge(val[0]) }
        | sort_order
   
+  honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
+            | TITLE       { result = Name.new(:title => val[0]) }
+            
   display_order : u_words word
        {
          result = Name.new(:given => val[0], :family => val[1])
@@ -101,7 +96,9 @@ require 'strscan'
     @input, @options = StringScanner.new(''), {
       :debug => false,
       :comma => ',',
-      :separator => /\s*(\band\b|\&)\s*/i
+      :separator => /\s*(\band\b|\&)\s*/i,
+      :title => /\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
+      :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
   
@@ -115,6 +112,14 @@ require 'strscan'
   
   def comma
     options[:comma]
+  end
+
+  def title
+    options[:title]
+  end
+
+  def appellation
+    options[:appellation]
   end
   
   def parse(input)
@@ -142,9 +147,9 @@ require 'strscan'
       [:COMMA, nil]
     when input.scan(/\s+/)
       next_token
-    when input.scan(/\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i)
+    when input.scan(title)
       [:TITLE, input.matched.strip]
-    when input.scan(/\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i)
+    when input.scan(appellation)
       [:APPELLATION, input.matched.strip]
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{comma}]*/)
       [:UWORD, input.matched]

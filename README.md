@@ -38,20 +38,19 @@ names are written in display-order:
     Namae.parse 'Yukihiro "Matz" Matsumoto'
     #-> [#<Name family="Matsumoto" given="Yukihiro" nick="Matz">]
 
-    Namae.parse 'Augusta Ada King and George Gordon Byron'
-    #-> [#<Name family="King" given="Augusta Ada">, #<Name family="Byron" given="George Gordon">]
+    Namae.parse 'Augusta Ada King and Lord Byron'
+    #-> [#<Name family="King" given="Augusta Ada">, #<Name family="Byron" title="Lord">]
 
     Namae.parse 'Sir Isaac Newton'
     #-> [#<Name family="Newton" given="Isaac" title="Sir">]
 
     Namae.parse 'Prof. Donald Ervin Knuth'
-		#-> [#<Name family="Knuth" given="Donald Ervin" title="Prof.">]
-		
+    #-> [#<Name family="Knuth" given="Donald Ervin" title="Prof.">]
+    
 Or in sort-order:
 
-    Turing, Alan M.
-
-Typically, names in sort-order will be easier to parse.
+    Namae.parse 'Turing, Alan M.'
+    #-> [#<Name family="Turing" given="Alan M.">]
 
 
 Rationale
@@ -73,6 +72,10 @@ language-detection or word segmentation features.
 For further reading, see the W3C's primer on
 [Personal Names Around the World](http://www.w3.org/International/questions/qa-personal-names).
 
+Contributors
+------------
+* [Sylvester Keil](http://sylvester.keil.or.at)
+* Dan Collis-Puro
 
 Copyright
 ---------

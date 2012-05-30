@@ -16,3 +16,4 @@ Feature: Parse the names in the Readme file
       | Yukihiro "Matz" Matsumoto | Yukihiro     |          | Matsumoto |        |       |             | Matz |
       | Sir Isaac Newton          | Isaac        |          | Newton    |        | Sir   |             |      |
       | Prof. Donald Ervin Knuth  | Donald Ervin |          | Knuth     |        | Prof. |             |      |
+      | Lord Byron                |              |          | Byron     |        | Lord  |             |      |

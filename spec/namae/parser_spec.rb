@@ -72,6 +72,10 @@ module Namae
           it 'treats "Ichiro" as a given name' do
             parser.parse!('Ichiro')[0].given.should == 'Ichiro'
           end
+
+          it 'treats "Lord Byron" as a title and family name' do
+            parser.parse!('Lord Byron')[0].values_at(:family, :title).should == ['Byron', 'Lord']
+          end
           
           it 'parses given and family part name in "Ichiro Suzuki"' do
             parser.parse!('Ichiro Suzuki')[0].values_at(:given, :family).should == %w{Ichiro Suzuki}
