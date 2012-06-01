@@ -18,10 +18,14 @@ Quickstart
         require 'namae'
         
         names = Namae.parse 'Yukihiro "Matz" Matsumoto'
+        #-> [#<Name family="Matsumoto" given="Yukihiro" nick="Matz">]
+
+3. Use the name objects to access the individual parts:
+
+        matz = names[0]
         
-        names[0].family #=> Matsumoto
-        names[0].nick #=> Matz
-        names[0].given #=> Yukihiro
+        matz.nick #-> "Matz"
+        matz.family #-> "Matsumoto"        
 
 Format and Examples
 -------------------
@@ -52,6 +56,11 @@ Or in sort-order:
     Namae.parse 'Turing, Alan M.'
     #-> [#<Name family="Turing" given="Alan M.">]
 
+You can also mix sort- and display-order in the same expression:
+
+    Namae.parse 'Torvalds, Linus and Alan Cox'
+    #-> [#<Name family="Torvalds" given="Linus">, #<Name family="Cox" given="Alan">]
+
 
 Rationale
 ---------
@@ -71,6 +80,26 @@ language-detection or word segmentation features.
 
 For further reading, see the W3C's primer on
 [Personal Names Around the World](http://www.w3.org/International/questions/qa-personal-names).
+
+Development
+-----------
+The Namae source code is [hosted on GitHub](https://github.com/berkmancenter/namae).
+You can check out a copy of the latest code using Git:
+
+    $ git clone https://github.com/berkmancenter/namae.git
+    
+To get started, generate the parser and run all tests:
+
+    $ cd namae
+    $ bundle install
+    $ rake racc
+    $ rake features
+    $ rake spec
+
+If you've found a bug or have a question, please open an issue on the
+[issue tracker](https://github.com/berkmancenter/namae/issues). Or, for extra
+credit, clone the Namae repository, write a failing example, fix the bug
+and submit a pull request.
 
 Contributors
 ------------

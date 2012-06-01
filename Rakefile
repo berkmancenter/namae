@@ -17,12 +17,12 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   gem.name = 'namae'
   gem.version = Namae::Version::STRING.dup
-  gem.homepage = 'http://github.com/inukshuk/namae'
+  gem.homepage = 'https://github.com/berkmancenter/namae'
 
   gem.email = "sylvester@keil.or.at"
   gem.authors = ["Sylvester Keil"]
 
-  gem.license = 'MIT'
+  gem.license = 'AGPL'
 
   gem.summary =
     'Namae parses personal names and splits them into their component parts.'
