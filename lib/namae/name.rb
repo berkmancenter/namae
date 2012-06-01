@@ -16,8 +16,16 @@ module Namae
     # rbx compatibility
     @parts = members.map(&:to_sym).freeze
 
+    @defaults = {
+      :initials => {
+        :expand => false,
+        :dots => true,
+        :spaces => false
+      }
+    }
+    
     class << self
-      attr_reader :parts
+      attr_reader :parts, :defaults
     end
 
     
@@ -34,22 +42,38 @@ module Namae
       values.compact.empty?
     end
 
-		# Merges the name with the passed-in name or hash.
-		#
-		# @param other [Name,Hash] the other name or hash
-		# @return [Name] self
-		def merge(other)
-			raise ArgumentError, "failed to merge #{other.class} into Name" unless
-				other.respond_to?(:each_pair)
-				
-			other.each_pair do |part, value|
-				writer = "#{part}="
-				send(writer, value) if !value.nil? && respond_to?(writer)
-			end
-			
-			self
-		end
+    # Merges the name with the passed-in name or hash.
+    #
+    # @param other [#each_pair] the other name or hash
+    # @return [self]
+    def merge(other)
+      raise ArgumentError, "failed to merge #{other.class} into Name" unless
+        other.respond_to?(:each_pair)
+        
+      other.each_pair do |part, value|
+        writer = "#{part}="
+        send(writer, value) if !value.nil? && respond_to?(writer)
+      end
+      
+      self
+    end
     
+    # @param options [Hash] the options to create the initials
+    #
+    # @option options [true,false] :expand (false) whether or not to expand the family name
+    # @option options [true,false] :dots (true) whether or not to print dots between the initials
+    # @option options [true,false] :spaces (false) whether or not to print spaces between the initals
+    #
+    # @return [String] the name's initials.
+    def initials(options = {})
+      options = Name.defaults[:initials].merge(options)
+      
+      if options[:expand]
+        [initials_of(given_part, options), family].compact.join(' ')
+      else
+        initials_of([given_part, family_part].join(' '), options)
+      end
+    end
 
     # @overload values_at(selector, ... )
     #   Returns an array containing the elements in self corresponding to
@@ -71,6 +95,25 @@ module Namae
     def inspect
       "#<Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if v }.compact.join(' ')}>"
     end
-        
+    
+
+    private
+    
+    def family_part
+      [particle, family].compact.join(' ')
+    end
+    
+    def given_part
+      [given, dropping_particle].compact.join(' ')
+    end
+    
+    # @param name [String] a name or part of a name
+    # @return [String] the initials of the passed-in name
+    def initials_of(name, options = {})
+      i = name.gsub(/([[:upper:]])[[:lower:]]+/, options[:dots] ? '\1.' : '\1')
+      i.gsub!(/\s+/, '') unless options[:spaces]
+      i
+    end
+
   end
 end

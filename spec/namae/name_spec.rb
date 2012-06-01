@@ -25,7 +25,16 @@ module Namae
       it 'returns an array with the given values' do
         Name.new(:family => 'foo').values_at(:family).should == ['foo']
       end
-      
+    end
+    
+    describe '#initials' do
+      it "returns the name's initials" do
+        Name.new(:family => 'Poe', :given => 'Edgar A.').initials.should == 'E.A.P.'
+      end
+
+      it "returns the name's initials but leaves the family name expanded" do
+        Name.new(:family => 'Poe', :given => 'Edgar A.').initials(:expand => true).should == 'E.A. Poe'
+      end
     end
     
     describe '#merge' do
