@@ -24,8 +24,20 @@ Quickstart
 
         matz = names[0]
         
-        matz.nick #-> "Matz"
-        matz.family #-> "Matsumoto"        
+        matz.nick
+        #-> "Matz"
+        
+        matz.family
+        #-> "Matsumoto"
+        
+        matz.initials
+        #-> "Y.M."
+        
+        matz.initials :expand => true
+        #-> "Y. Matsumoto"
+        
+        matz.initials :dots => false
+        #-> "YM"
 
 Format and Examples
 -------------------
