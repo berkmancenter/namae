@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
     "lib/namae/parser.y",
     "lib/namae/utility.rb",
     "lib/namae/version.rb",
+    "namae.gemspec",
     "spec/namae/name_spec.rb",
     "spec/namae/parser_spec.rb",
     "spec/namae/utility_spec.rb",
