@@ -19,8 +19,8 @@ Jeweler::Tasks.new do |gem|
   gem.version = Namae::Version::STRING.dup
   gem.homepage = 'https://github.com/berkmancenter/namae'
 
-  gem.email = "sylvester@keil.or.at"
-  gem.authors = ["Sylvester Keil"]
+  gem.email = ['sylvester@keil.or.at', 'dan@collispuro.com']
+  gem.authors = ['Sylvester Keil', 'Dan Collis-Puro']
 
   gem.license = 'AGPL'
 
