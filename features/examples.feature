@@ -9,11 +9,16 @@ Feature: Parse the names in the Readme file
       | <given> | <particle> | <family> | <suffix> | <title> | <appellation> | <nick> |
 
     @readme @display
-    Scenarios: Readme examples (display order)
-      | name                      | given        | particle | family    | suffix | title | appellation | nick |
-      | Charles Babbage           | Charles      |          | Babbage   |        |       |             |      |
-      | Mr. Alan M. Turing        | Alan M.      |          | Turing    |        |       | Mr.         |      |
-      | Yukihiro "Matz" Matsumoto | Yukihiro     |          | Matsumoto |        |       |             | Matz |
-      | Sir Isaac Newton          | Isaac        |          | Newton    |        | Sir   |             |      |
-      | Prof. Donald Ervin Knuth  | Donald Ervin |          | Knuth     |        | Prof. |             |      |
-      | Lord Byron                |              |          | Byron     |        | Lord  |             |      |
+    Scenarios: Readme examples (display-order)
+      | name                         | given        | particle | family    | suffix | title | appellation | nick |
+      | Charles Babbage              | Charles      |          | Babbage   |        |       |             |      |
+      | Mr. Alan M. Turing           | Alan M.      |          | Turing    |        |       | Mr.         |      |
+      | Yukihiro "Matz" Matsumoto    | Yukihiro     |          | Matsumoto |        |       |             | Matz |
+      | Sir Isaac Newton             | Isaac        |          | Newton    |        | Sir   |             |      |
+      | Prof. Donald Ervin Knuth     | Donald Ervin |          | Knuth     |        | Prof. |             |      |
+      | Lord Byron                   |              |          | Byron     |        | Lord  |             |      |
+
+    @readme @sort
+    Scenarios: Readme examples (sort-order)
+      | name                         | given        | particle | family           | suffix | title | appellation | nick |
+      | Carreño Quiñones, María-Jose | María-Jose   |          | Carreño Quiñones |        |       |             |      |

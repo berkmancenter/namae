@@ -73,6 +73,15 @@ You can also mix sort- and display-order in the same expression:
     Namae.parse 'Torvalds, Linus and Alan Cox'
     #-> [#<Name family="Torvalds" given="Linus">, #<Name family="Cox" given="Alan">]
 
+Typically, sort-order names are easier to parse, because the syntax is less
+ambiguous. For example, multiple family names are always possible in sort-order:
+
+    Namae.parse 'Carreño Quiñones, María-Jose'
+    #-> [#<Name family="Carreño Quiñones" given="María-Jose">]
+
+Whilst in display-order, multiple family names are only supported when the
+name contains a particle or a nickname.
+
 
 Rationale
 ---------
