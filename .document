@@ -2,5 +2,6 @@ lib/**/*.rb
 bin/*
 - 
 features/**/*.feature
-LICENSE
+AGPL
+BSDL
 README.md

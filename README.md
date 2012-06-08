@@ -130,4 +130,5 @@ Contributors
 Copyright
 ---------
 Copyright (c) 2012 President and Fellows of Harvard College.
-Please see LICENSE for further details.
+
+Namae is dual licensed under the AGPL and a BSD-style license.
