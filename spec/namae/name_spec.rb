@@ -17,6 +17,17 @@ module Namae
       
     end
     
+    describe '.parse' do
+      it 'returns an empty name for an empty string' do
+        Name.parse('').should be_empty
+        Name.parse('').should be_a(Name)
+      end
+      
+      it 'returns a single name object if there is more than one name' do
+        Name.parse('Plato and Sokrates').given.should == 'Plato'
+      end
+    end
+    
     describe '#values_at' do
       it 'returns an array with the given values' do
         Name.new(:family => 'foo').values_at(:family).should == ['foo']

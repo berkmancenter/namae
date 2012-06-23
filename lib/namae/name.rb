@@ -26,6 +26,22 @@ module Namae
     
     class << self
       attr_reader :parts, :defaults
+
+      # @param name [String] the name to be parsed
+      # @raise [ArgumentError] if the name cannot be parsed or if the input
+      #   contains more than a single name
+      # @return [Name] the parsed name
+      def parse!(name)
+        Parser.instance.parse!(name)[0] || new
+      end
+      
+      # @param name [String] the name to be parsed
+      # @return [Name,nil] the parsed name  or nil if the name cannot be parsed
+      def parse(name)
+        parse!(name)
+      rescue
+        nil
+      end
     end
 
     
