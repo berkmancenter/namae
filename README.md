@@ -53,13 +53,13 @@ Rails model:
     class Person < ActiveRecord::Base
       attr_accessible :name
 
-    	delegate :family, :initials, :to => :namae
+      delegate :family, :initials, :to => :namae
 
       private
 
-    	def namae
-    		@namae ||= Namae::Name.parse(name)
-    	end
+      def namae
+        @namae ||= Namae::Name.parse(name)
+      end
     end
 
 In this minimal example, we are using the method `Namae::Name.parse` which
