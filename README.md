@@ -39,6 +39,33 @@ Quickstart
         matz.initials :dots => false
         #-> "YM"
 
+Rails
+-----
+It is easy to integrate Namae into your Rails project. There are two typical
+cases where this might be useful: you want to store individual parts of a
+person's name in your database, but want to provide your user's with a single
+input field; or else, you keep personal names in a single database column
+but your application occasionally requires access to individual parts.
+
+For the latter use case, there is a straightforward way to add Namae to your
+Rails model:
+
+    class Person < ActiveRecord::Base
+      attr_accessible :name
+
+    	delegate :family, :initials, :to => :namae
+
+      private
+
+    	def namae
+    		@namae ||= Namae::Name.parse(name)
+    	end
+    end
+
+In this minimal example, we are using the method `Namae::Name.parse` which
+always returns a single Name instance and delegate all readers for the name's
+parts in which we are interested to this instance.
+
 Format and Examples
 -------------------
 Namae recognizes names in a wide variety of two basic formats, internally

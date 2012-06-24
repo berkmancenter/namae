@@ -36,11 +36,11 @@ module Namae
       end
       
       # @param name [String] the name to be parsed
-      # @return [Name,nil] the parsed name  or nil if the name cannot be parsed
+      # @return [Name] the parsed name
       def parse(name)
         parse!(name)
       rescue
-        nil
+        new
       end
     end
 
