@@ -26,12 +26,12 @@ begin
     gem.license = 'AGPL'
 
     gem.summary =
-      'Namae parses personal names and splits them into their component parts.'
+      'Namae (名前) parses personal names and splits them into their component parts.'
 
     gem.description = %q{
-      Namae is a parser for human names. It recognizes personal names of various
-      cultural backgrounds and tries to split them into their component parts
-      (e.g., given and family names, honorifics etc.).
+      Namae (名前) is a parser for human names. It recognizes personal names of
+      various cultural backgrounds and tries to split them into their component
+      parts (e.g., given and family names, honorifics etc.).
     }.gsub(/\s+/, ' ')
 
   end

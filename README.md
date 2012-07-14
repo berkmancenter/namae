@@ -1,5 +1,5 @@
-Namae
-=====
+Namae (名前)
+==========
 Namae is a parser for human names. It recognizes personal names of various
 cultural backgrounds and tries to split them into their component parts
 (e.g., given and family names, honorifics etc.).
