@@ -52,8 +52,17 @@ module Namae
       super(*attributes.values_at(*Name.parts))
     end
   
+    # @return [String] the name in sort order
+    def sort_order(delimiter = ', ')
+      [family_part, given_part].reject(&:empty?).join(delimiter)
+    end
 
-    # True if all the name components are nil.
+    # @return [String] the name in display order
+    def display_order
+      [given_part, family_part].reject(&:empty?).join(' ')
+    end
+
+    # @return [Boolean] whether or not all the name components are nil.
     def empty?
       values.compact.empty?
     end
@@ -107,11 +116,12 @@ module Namae
     end
     
     
-    # Describe the contents of this name in a string.
+    # @return [String] a string representation of the name
     def inspect
       "#<Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if v }.compact.join(' ')}>"
     end
     
+    alias to_s display_order
 
     private
     
