@@ -13,7 +13,7 @@ Feature: Parse a list of names
       | Publius Ovidius | Naso   |
 
   @list
-  Scenario: A list of names separated by commas
+  Scenario: A list of sort-order names separated by commas
     When I parse the names "Kernighan, Brian, Ritchie, Dennis and Donald Knuth"
     Then there should be 3 names
     And the names should be:
@@ -21,6 +21,9 @@ Feature: Parse a list of names
       | Brian  | Kernighan |
       | Dennis | Ritchie   |
       | Donald | Knuth     |
+
+  @list
+  Scenario: A list of display-order names separated by commas
     When I parse the names "Brian Kernighan, Dennis Ritchie and Donald Knuth"
     Then there should be 3 names
     And the names should be:
@@ -28,6 +31,9 @@ Feature: Parse a list of names
       | Brian  | Kernighan |
       | Dennis | Ritchie   |
       | Donald | Knuth     |
+
+  @list
+  Scenario: A list of display-order names separated by commas and by 'and'
     When I parse the names "Brian Kernighan, Dennis Ritchie, and Donald Knuth"
     Then there should be 3 names
     And the names should be:
