@@ -98,6 +98,7 @@ require 'strscan'
       :comma => ',',
       :separator => /\s*(\band\b|\&)\s*/i,
       :title => /\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
+			:suffix => /\s*\b(jr|sr|[ivx]+)\.?\s*/i,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
@@ -118,6 +119,10 @@ require 'strscan'
     options[:title]
   end
 
+  def suffix
+    options[:suffix]
+  end
+
   def appellation
     options[:appellation]
   end
@@ -130,21 +135,51 @@ require 'strscan'
   end
   
   def parse!(string)
-    @yydebug = debug?
-    input.string = string.strip
+    input.string = normalize(string)
+		reset
     do_parse
   end
-    
-  private
   
+	def normalize(string)
+		string = string.strip
+		string
+	end
+	
+	def reset
+    @commas, @yydebug = 0, debug?		
+		self
+	end
+
+  private
+  	
+	def consume_separator
+		@commas = 0
+		[:AND, nil]
+	end
+	
+	def consume_comma
+		@commas += 1
+		[:COMMA, nil]
+	end
+	
+	def seen_suffix?
+		return false unless @vstack
+		return true if @vstack[-1].nil?
+		@vstack[-1] =~ suffix
+	end
+
   def next_token
     case
     when input.nil?, input.eos?
       nil
     when input.scan(separator)
-      [:AND, nil]
+      consume_separator
     when input.scan(/\s*,\s*/)
-      [:COMMA, nil]
+			if @commas.zero? || @commas == 1 && seen_suffix?
+				consume_comma
+			else
+				consume_separator
+			end
     when input.scan(/\s+/)
       next_token
     when input.scan(title)

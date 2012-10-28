@@ -13,6 +13,12 @@ rescue LoadError
   # ignore
 end
 
+begin
+  require 'debugger'
+rescue LoadError
+  # ignore
+end
+
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../../lib')
 require 'namae'
 
