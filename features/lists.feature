@@ -11,3 +11,13 @@ Feature: Parse a list of names
       | Plato           |        |
       | Archimedes      |        |
       | Publius Ovidius | Naso   |
+
+  @list
+  Scenario: A list of names separated by commas
+    When I parse the names "Kernighan, Brian, Ritchie, Dennis and Donald Knuth"
+    Then there should be 3 names
+    And the names should be:
+      | given  | family    |
+      | Brian  | Kernighan |
+      | Dennis | Ritchie   |
+      | Donald | Knuth     |
