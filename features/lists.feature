@@ -1,6 +1,6 @@
 Feature: Parse a list of names
-	As a hacker who works with Namae
-	I want to be able to parse multiple names in a list
+  As a hacker who works with Namae
+  I want to be able to parse multiple names in a list
 
   @list
   Scenario: A list of names separated by 'and'

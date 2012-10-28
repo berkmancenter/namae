@@ -98,7 +98,7 @@ require 'strscan'
       :comma => ',',
       :separator => /\s*(\band\b|\&)\s*/i,
       :title => /\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
-			:suffix => /\s*\b(jr|sr|[ivx]+)\.?\s*/i,
+      :suffix => /\s*\b(jr|sr|[ivx]+)\.?\s*/i,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
@@ -136,37 +136,37 @@ require 'strscan'
   
   def parse!(string)
     input.string = normalize(string)
-		reset
+    reset
     do_parse
   end
   
-	def normalize(string)
-		string = string.strip
-		string
-	end
-	
-	def reset
-    @commas, @yydebug = 0, debug?		
-		self
-	end
+  def normalize(string)
+    string = string.strip
+    string
+  end
+  
+  def reset
+    @commas, @yydebug = 0, debug?   
+    self
+  end
 
   private
-  	
-	def consume_separator
-		@commas = 0
-		[:AND, nil]
-	end
-	
-	def consume_comma
-		@commas += 1
-		[:COMMA, nil]
-	end
-	
-	def seen_suffix?
-		return false unless @vstack
-		return true if @vstack[-1].nil?
-		@vstack[-1] =~ suffix
-	end
+    
+  def consume_separator
+    @commas = 0
+    [:AND, nil]
+  end
+  
+  def consume_comma
+    @commas += 1
+    [:COMMA, nil]
+  end
+  
+  def seen_suffix?
+    return false unless @vstack
+    return true if @vstack[-1].nil?
+    @vstack[-1] =~ suffix
+  end
 
   def next_token
     case
@@ -175,11 +175,11 @@ require 'strscan'
     when input.scan(separator)
       consume_separator
     when input.scan(/\s*,\s*/)
-			if @commas.zero? || @commas == 1 && seen_suffix?
-				consume_comma
-			else
-				consume_separator
-			end
+      if @commas.zero? || @commas == 1 && seen_suffix?
+        consume_comma
+      else
+        consume_separator
+      end
     when input.scan(/\s+/)
       next_token
     when input.scan(title)
