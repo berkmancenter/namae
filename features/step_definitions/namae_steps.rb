@@ -20,3 +20,13 @@ Then /^the parts should be:$/ do |table|
       row.values_at('given', 'particle', 'family', 'suffix', 'title', 'appellation', 'nick')
   end
 end
+
+Then /^there should be (\d+) names$/ do |count|
+  @names.length.should == count.to_i
+end
+
+Then /^the names should be:$/ do |table|
+  table.hashes.each_with_index do |row, i|
+    @names[i].values_at(*row.keys.map(&:to_sym)).map(&:to_s).should == row.values
+  end
+end
