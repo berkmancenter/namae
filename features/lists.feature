@@ -21,3 +21,17 @@ Feature: Parse a list of names
       | Brian  | Kernighan |
       | Dennis | Ritchie   |
       | Donald | Knuth     |
+    When I parse the names "Brian Kernighan, Dennis Ritchie and Donald Knuth"
+    Then there should be 3 names
+    And the names should be:
+      | given  | family    |
+      | Brian  | Kernighan |
+      | Dennis | Ritchie   |
+      | Donald | Knuth     |
+    When I parse the names "Brian Kernighan, Dennis Ritchie, and Donald Knuth"
+    Then there should be 3 names
+    And the names should be:
+      | given  | family    |
+      | Brian  | Kernighan |
+      | Dennis | Ritchie   |
+      | Donald | Knuth     |
