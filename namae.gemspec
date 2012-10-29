@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "namae"
-  s.version = "0.4.0"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sylvester Keil", "Dan Collis-Puro"]
@@ -56,14 +56,12 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<racc>, ["~> 1.4.8"])
-      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<bundler>, ["~> 1.1"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<ZenTest>, ["~> 4.8.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
     else
       s.add_dependency(%q<racc>, ["~> 1.4.8"])
-      s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, ["~> 1.1"])
       s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<ZenTest>, ["~> 4.8.0"])
@@ -71,7 +69,6 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<racc>, ["~> 1.4.8"])
-    s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<bundler>, ["~> 1.1"])
     s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<ZenTest>, ["~> 4.8.0"])
