@@ -82,9 +82,17 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   end
 
   private
-    
+  
+  def stack
+    @vstack || @racc_vstack || []
+  end
+  
+  def last_token
+    stack[-1]
+  end
+  
   def consume_separator
-    return next_token if seen_separator?
+    # return next_token if seen_separator?
     @commas, @words = 0, 0
     [:AND, nil]
   end
@@ -100,12 +108,12 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   end
 
   def seen_separator?
-    @vstack && @vstack[-1].nil?
+    !stack.empty? && last_token.nil?
   end
 
   def seen_suffix?
-    return false unless @vstack
-    @vstack[-1] == comma || @vstack[-1] =~ suffix
+    return false unless stack.length > 1
+    last_token == comma || last_token =~ suffix
   end
   
   def seen_full_name?
