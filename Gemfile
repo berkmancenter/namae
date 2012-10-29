@@ -9,7 +9,6 @@ end
 
 group :development do
   gem 'racc', '~> 1.4.8', :platform => [:mri_19, :mri_18, :rbx]
-  gem 'rdoc', '~> 3.12'
   gem 'bundler', '~> 1.1'
   gem 'simplecov', :require => false
   gem 'ZenTest', '~> 4.8.0'
