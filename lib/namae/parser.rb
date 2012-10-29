@@ -121,11 +121,15 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   end
   
   def will_see_suffix?
-    input.peek(8).to_s.split(/\s+/)[0] =~ suffix
+    input.peek(8).to_s.strip.split(/\s+/)[0] =~ suffix
   end
   
+  def will_see_initial?
+    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /[[:alpha:]]\./
+  end
+
   def seen_full_name?
-    prefer_comma_as_separator? && @words > 1
+    prefer_comma_as_separator? && @words > 1 && !will_see_initial?
   end
 
   def next_token

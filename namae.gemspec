@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "namae"
-  s.version = "0.5.0"
+  s.version = "0.6.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sylvester Keil", "Dan Collis-Puro"]
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
     "features/examples.feature",
     "features/lists.feature",
     "features/step_definitions/namae_steps.rb",
+    "features/suffix.feature",
     "features/support/env.rb",
     "lib/namae.rb",
     "lib/namae/name.rb",
