@@ -1,3 +1,7 @@
+Given /^a parser that prefers commas as separators$/ do
+  Namae::Parser.instance.options[:prefer_comma_as_separator] = true
+end
+
 When /^I parse the name "(.*)"$/ do |string|
   @name = Namae.parse!(string)[0]
 end

@@ -36,7 +36,7 @@ module Namae
         describe 'when the next input is " , "' do
           before { parser.send(:input).string = ' , ' }
           it 'returns a COMMA token' do
-            parser.send(:next_token).should == [:COMMA, nil]
+            parser.send(:next_token).should == [:COMMA, ',']
           end
         end
         

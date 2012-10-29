@@ -1,5 +1,10 @@
 begin
   require 'simplecov'
+rescue LoadError
+  # ignore
+end
+
+begin
   require 'debugger'
 rescue LoadError
   # ignore

@@ -21,10 +21,11 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   def initialize
     @input, @options = StringScanner.new(''), {
       :debug => false,
+      :prefer_comma_as_separator => false,
       :comma => ',',
       :separator => /\s*(\band\b|\&)\s*/i,
       :title => /\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
-			:suffix => /\s*\b(jr|sr|[ivx]+)\.?\s*/i,
+      :suffix => /\s*\b(jr|sr|[ivx]+)\.?\s*/i,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
@@ -53,6 +54,10 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
     options[:appellation]
   end
   
+  def prefer_comma_as_separator?
+    options[:prefer_comma_as_separator]
+  end
+
   def parse(input)
     parse!(input)
   rescue => e
@@ -62,37 +67,46 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   
   def parse!(string)
     input.string = normalize(string)
-		reset
+    reset
     do_parse
   end
   
-	def normalize(string)
-		string = string.strip
-		string
-	end
-	
-	def reset
-    @commas, @yydebug = 0, debug?		
-		self
-	end
+  def normalize(string)
+    string = string.strip
+    string
+  end
+  
+  def reset
+    @commas, @words, @yydebug = 0, 0, debug?   
+    self
+  end
 
   private
-  	
-	def consume_separator
-		@commas = 0
-		[:AND, nil]
-	end
-	
-	def consume_comma
-		@commas += 1
-		[:COMMA, nil]
-	end
-	
-	def seen_suffix?
-		return false unless @vstack
-		return true if @vstack[-1].nil?
-		@vstack[-1] =~ suffix
-	end
+    
+  def consume_separator
+    @commas, @words = 0, 0
+    return next_token if @vstack.length > 1 && @vstack[-1].nil?
+    [:AND, nil]
+  end
+  
+  def consume_comma
+    @commas += 1
+    [:COMMA, comma]
+  end
+
+  def consume_word(type, word)
+    @words += 1
+    [type, word]
+  end
+
+  def seen_suffix?
+    return false unless @vstack
+    @vstack[-1] == comma || @vstack[-1] =~ suffix
+  end
+  
+  def seen_full_name?
+    prefer_comma_as_separator? && @words > 1
+  end
 
   def next_token
     case
@@ -101,25 +115,25 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
     when input.scan(separator)
       consume_separator
     when input.scan(/\s*,\s*/)
-			if @commas.zero? || @commas == 1 && seen_suffix?
-				consume_comma
-			else
-				consume_separator
-			end
+      if @commas.zero? && !seen_full_name? || @commas == 1 && seen_suffix?
+        consume_comma
+      else
+        consume_separator
+      end
     when input.scan(/\s+/)
       next_token
     when input.scan(title)
-      [:TITLE, input.matched.strip]
+      consume_word(:TITLE, input.matched.strip)
     when input.scan(appellation)
       [:APPELLATION, input.matched.strip]
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{comma}]*/)
-      [:UWORD, input.matched]
+      consume_word(:UWORD, input.matched)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:lower:]][^\s#{comma}]*/)
-      [:LWORD, input.matched]
+      consume_word(:LWORD, input.matched)
     when input.scan(/(\\\w+)?\{[^\}]*\}[^\s#{comma}]*/)
-      [:PWORD, input.matched]
+      consume_word(:PWORD, input.matched)
     when input.scan(/('[^'\n]+')|("[^"\n]+")/)
-      [:NICK, input.matched[1...-1]]
+      consume_word(:NICK, input.matched[1...-1])
     else
       raise ArgumentError,
         "Failed to parse name #{input.string.inspect}: unmatched data at offset #{input.pos}"
