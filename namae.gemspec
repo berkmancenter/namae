@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sylvester Keil", "Dan Collis-Puro"]
-  s.date = "2012-08-09"
+  s.date = "2012-10-29"
   s.description = " Namae (\u{540d}\u{524d}) is a parser for human names. It recognizes personal names of various cultural backgrounds and tries to split them into their component parts (e.g., given and family names, honorifics etc.). "
   s.email = ["sylvester@keil.or.at", "dan@collispuro.com"]
   s.extra_rdoc_files = [
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
     "cucumber.yml",
     "features/bibtex.feature",
     "features/examples.feature",
+    "features/lists.feature",
     "features/step_definitions/namae_steps.rb",
     "features/support/env.rb",
     "lib/namae.rb",
@@ -47,7 +48,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/berkmancenter/namae"
   s.licenses = ["AGPL"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
+  s.rubygems_version = "1.8.24"
   s.summary = "Namae (\u{540d}\u{524d}) parses personal names and splits them into their component parts."
 
   if s.respond_to? :specification_version then
