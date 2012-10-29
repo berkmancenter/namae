@@ -158,8 +158,8 @@ require 'strscan'
   private
     
   def consume_separator
+    return next_token if seen_separator?
     @commas, @words = 0, 0
-    return next_token if @vstack.length > 1 && @vstack[-1].nil?
     [:AND, nil]
   end
   
@@ -171,6 +171,10 @@ require 'strscan'
   def consume_word(type, word)
     @words += 1
     [type, word]
+  end
+
+  def seen_separator?
+    @vstack && @vstack[-1].nil?
   end
 
   def seen_suffix?
