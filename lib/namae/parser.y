@@ -185,9 +185,17 @@ require 'strscan'
     !stack.empty? && last_token == :AND
   end
 
+  def suffix?
+    seen_suffix? || will_see_suffix?
+  end
+  
   def seen_suffix?
     return false unless stack.length > 1
     last_token == :COMMA || last_token =~ suffix
+  end
+  
+  def will_see_suffix?
+    input.peek(8).to_s.split(/\s+/)[0] =~ suffix
   end
   
   def seen_full_name?
@@ -201,7 +209,7 @@ require 'strscan'
     when input.scan(separator)
       consume_separator
     when input.scan(/\s*,\s*/)
-      if @commas.zero? && !seen_full_name? || @commas == 1 && seen_suffix?
+      if @commas.zero? && !seen_full_name? || @commas == 1 && suffix?
         consume_comma
       else
         consume_separator

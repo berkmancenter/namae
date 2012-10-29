@@ -61,7 +61,7 @@ Feature: Parse BibTeX-style names
     | Dominique {G}alouzeau de Villepin  | Dominique            | {G}alouzeau de | Villepin                |    |
     | Galouzeau {de} Villepin, Dominique | Dominique            |                | Galouzeau {de} Villepin |    |
 
-   @names 
+  @names 
   Scenarios: Some actual names
     | name                              | first                   | von            | last                           | jr  |
     | John Paul Jones                   | John Paul               |                | Jones                          |     |
