@@ -92,14 +92,14 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   end
   
   def consume_separator
-    # return next_token if seen_separator?
+    return next_token if seen_separator?
     @commas, @words = 0, 0
-    [:AND, nil]
+    [:AND, :AND]
   end
   
   def consume_comma
     @commas += 1
-    [:COMMA, comma]
+    [:COMMA, :COMMA]
   end
 
   def consume_word(type, word)
@@ -108,12 +108,12 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   end
 
   def seen_separator?
-    !stack.empty? && last_token.nil?
+    !stack.empty? && last_token == :AND
   end
 
   def seen_suffix?
     return false unless stack.length > 1
-    last_token == comma || last_token =~ suffix
+    last_token == :COMMA || last_token =~ suffix
   end
   
   def seen_full_name?

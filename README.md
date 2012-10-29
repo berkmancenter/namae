@@ -109,7 +109,6 @@ ambiguous. For example, multiple family names are always possible in sort-order:
 Whilst in display-order, multiple family names are only supported when the
 name contains a particle or a nickname.
 
-
 Rationale
 ---------
 Parsing human names is at once too easy and too hard. When working in the
