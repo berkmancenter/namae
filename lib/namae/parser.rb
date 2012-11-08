@@ -25,7 +25,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
       :comma => ',',
       :separator => /\s*(\band\b|\&)\s*/i,
       :title => /\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
-      :suffix => /\s*\b(jr|sr|[ivx]+)\.?\s*/i,
+      :suffix => /\s*\b(jr|sr|[ivx]{2,})\.?\s*/i,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
@@ -77,7 +77,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   end
   
   def reset
-    @commas, @words, @yydebug = 0, 0, debug?   
+    @commas, @words, @initials, @yydebug = 0, 0, 0, debug?   
     self
   end
 
@@ -93,7 +93,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   
   def consume_separator
     return next_token if seen_separator?
-    @commas, @words = 0, 0
+    @commas, @words, @initials = 0, 0, 0
     [:AND, :AND]
   end
   
@@ -104,6 +104,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
 
   def consume_word(type, word)
     @words += 1
+    @initials += 1 if type == :UWORD && word =~ /^\s*[[:alpha:]]\.\s*$/
     [type, word]
   end
 
@@ -123,13 +124,13 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 90)
   def will_see_suffix?
     input.peek(8).to_s.strip.split(/\s+/)[0] =~ suffix
   end
-  
+    
   def will_see_initial?
     input.peek(6).to_s.strip.split(/\s+/)[0] =~ /[[:alpha:]]\./
   end
 
   def seen_full_name?
-    prefer_comma_as_separator? && @words > 1 && !will_see_initial?
+    prefer_comma_as_separator? && @words > 1 && (@initials > 0 || !will_see_initial?)
   end
 
   def next_token

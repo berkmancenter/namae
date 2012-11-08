@@ -61,3 +61,15 @@ Feature: Parse a list of names
       | Brian  | Kernighan |
       | Dennis | Ritchie   |
       | Donald | Knuth     |
+
+  @list @wip
+  Scenario: A list of names separated by commas
+  	Given a parser that prefers commas as separators
+    When I parse the names "G. Proctor, M. Cooper, P. Sanders & B. Malcom"
+    # Then there should be 4 names
+    Then the names should be:
+      | given | family  |
+      | G.    | Proctor |
+      | M.    | Cooper  |
+      | P.    | Sanders |
+      | B.    | Malcom  |
