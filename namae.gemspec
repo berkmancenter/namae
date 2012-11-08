@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "namae"
-  s.version = "0.7.0"
+  s.version = "0.7.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sylvester Keil", "Dan Collis-Puro"]
-  s.date = "2012-10-29"
+  s.date = "2012-11-08"
   s.description = " Namae (\u{540d}\u{524d}) is a parser for human names. It recognizes personal names of various cultural backgrounds and tries to split them into their component parts (e.g., given and family names, honorifics etc.). "
   s.email = ["sylvester@keil.or.at", "dan@collispuro.com"]
   s.extra_rdoc_files = [
