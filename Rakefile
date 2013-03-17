@@ -58,5 +58,9 @@ Cucumber::Rake::Task.new(:features)
 
 task :default => [:spec, :features]
 
-require 'yard'
-YARD::Rake::YardocTask.new
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new
+rescue LoadError => e
+  # ignore
+end

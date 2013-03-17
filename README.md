@@ -156,5 +156,6 @@ Contributors
 Copyright
 ---------
 Copyright (c) 2012 President and Fellows of Harvard College.
+Copyright (c) 2013 Sylvester Keil
 
 Namae is dual licensed under the AGPL and a BSD-style license.
