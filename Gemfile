@@ -15,7 +15,7 @@ group :development do
 end
 
 group :debug do
-  gem 'debugger', '~> 1.1.3', :platform => [:mri_20, :mri_19]
+  gem 'debugger', '~> 1.1.3', :platform => [:mri_19]
 end
 
 group :osx do
