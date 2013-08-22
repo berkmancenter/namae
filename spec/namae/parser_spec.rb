@@ -103,6 +103,14 @@ module Namae
             end
           end
 
+          it 'parses common Jr. as a suffix in sort order' do
+            parser.parse!('Griffey, Jr., Ken')[0].values_at(:given, :family, :suffix).should == ['Ken', 'Griffey', 'Jr.']
+          end
+
+          it 'parses common Jr. as a suffix in display order' do
+            parser.parse!('Ken Griffey Jr.')[0].values_at(:given, :family, :suffix).should == ['Ken', 'Griffey', 'Jr.']
+          end
+
         end
       end
 
