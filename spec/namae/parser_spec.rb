@@ -60,6 +60,19 @@ module Namae
           end
         end
 
+        %w{Jr. Jr Sr. Sr II II. VII IX}.each do |suffix|
+          describe "the next token is #{suffix.inspect}" do
+            before { parser.send(:input).string = suffix }
+            it 'returns an SUFFIX token' do
+              parser.send(:next_token).should == [:SUFFIX, suffix]
+            end
+
+            it 'the input matches the suffix pattern' do
+              parser.suffix.should match(suffix)
+            end
+          end
+        end
+
       end
 
       describe '#parse!' do
@@ -105,6 +118,7 @@ module Namae
 
           it 'parses common Jr. as a suffix in sort order' do
             parser.parse!('Griffey, Jr., Ken')[0].values_at(:given, :family, :suffix).should == ['Ken', 'Griffey', 'Jr.']
+            parser.parse!('Griffey, Ken, Jr.')[0].values_at(:given, :family, :suffix).should == ['Ken', 'Griffey', 'Jr.']
           end
 
           it 'parses common Jr. as a suffix in display order' do

@@ -46,10 +46,22 @@ module Namae
 
     
     # @param attributes [Hash] the individual parts of the name
+    # @param sanitize [Boolean] whether or not to apply extra
+    #   sanitation rules
     # @example
     #   Name.new(:family => 'Matsumoto')
-    def initialize(attributes = {})
+    def initialize(attributes = {}, sanitize = false)
       super(*attributes.values_at(*Name.parts))
+
+      if sanitize && suffix && !given && family
+        tokens = family.split(/\s+/)
+
+        # Display-order plus comma suffix special case
+        if tokens.length > 1
+          self.family = tokens.pop
+          self.given = tokens.join(' ')
+        end
+      end
     end
   
     # @return [String] the name in sort order

@@ -90,6 +90,15 @@ names are written in display-order:
     Namae.parse 'Prof. Donald Ervin Knuth'
     #-> [#<Name family="Knuth" given="Donald Ervin" title="Prof.">]
     
+    Namae.parse 'Ms. Sofia Kovaleskaya'
+    #-> [#<Name family="Kovaleskaya" given="Sofia" appellation="Ms.">]
+
+    Namae.parse 'Countess Ada Lovelace'
+    #-> [#<Name family="Lovelace" given="Ada" title="Countess">]
+
+    Namae.parse 'Ken Griffey Jr.'
+    #-> [#<Name family="Griffey" given="Ken" suffix="Jr.">]
+
 Or in sort-order:
 
     Namae.parse 'Turing, Alan M.'
@@ -152,6 +161,10 @@ Contributors
 ------------
 * [Sylvester Keil](http://sylvester.keil.or.at)
 * Dan Collis-Puro
+
+Credits
+-------
+Namae was written as a part of a Google Summer of Code project. Thanks Google!
 
 Copyright
 ---------

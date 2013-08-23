@@ -1,8 +1,8 @@
-# -*- racc -*-
+# -*- ruby -*-
 
 class Namae::Parser
 
-token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE
+token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE SUFFIX
 
 expect 0
 
@@ -21,9 +21,9 @@ rule
   honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
             | TITLE       { result = Name.new(:title => val[0]) }
             
-  display_order : u_words word
+  display_order : u_words word opt_suffices
        {
-         result = Name.new(:given => val[0], :family => val[1])
+         result = Name.new(:given => val[0], :family => val[1], :suffix => val[2])
        }
        | u_words NICK last
        {
@@ -46,18 +46,18 @@ rule
        
   sort_order : last COMMA first
        {
-         result = Name.new(:family => val[0], :suffix => val[2][0],
-           :given => val[2][1])
+         result = Name.new({ :family => val[0], :suffix => val[2][0],
+           :given => val[2][1] }, !!val[2][0])
        }
        | von last COMMA first
        {
-         result = Name.new(:particle => val[0], :family => val[1],
-           :suffix => val[3][0], :given => val[3][1])
+         result = Name.new({ :particle => val[0], :family => val[1],
+           :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
        }
        | u_words von last COMMA first
        {
-         result = Name.new(:particle => val[0,2].join(' '), :family => val[2],
-           :suffix => val[4][0], :given => val[4][1])
+         result = Name.new({ :particle => val[0,2].join(' '), :family => val[2],
+           :suffix => val[4][0], :given => val[4][1] }, !!val[4][0])
        }
        ;
 
@@ -67,8 +67,10 @@ rule
 
   last : LWORD | u_words
 
-  first : opt_words                 { result = [nil,val[0]] }
-        | opt_words COMMA opt_words { result = [val[0],val[2]] }
+  first : opt_words             { result = [nil,val[0]] }
+        | words COMMA suffices  { result = [val[2],val[0]] }
+        | suffices              { result = [val[0],nil] }
+        | suffices COMMA words  { result = [val[0],val[2]] }
 
   u_words : u_word
           | u_words u_word { result = val.join(' ') }
@@ -81,6 +83,11 @@ rule
   opt_words : /* empty */ | words
 
   word : LWORD | UWORD | PWORD
+
+  opt_suffices : /* empty */ | suffices
+
+  suffices : SUFFIX
+           | suffices SUFFIX { result = val.join(' ') }
 
 ---- header
 require 'singleton'
@@ -98,8 +105,8 @@ require 'strscan'
       :prefer_comma_as_separator => false,
       :comma => ',',
       :separator => /\s*(\band\b|\&)\s*/i,
-      :title => /\s*\b(sir|lord|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
-      :suffix => /\s*\b(jr|sr|[ivx]{2,})\.?\s*/i,
+      :title => /\s*\b(sir|lord|count(ess)?|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
+      :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
@@ -151,7 +158,7 @@ require 'strscan'
   end
   
   def reset
-    @commas, @words, @initials, @yydebug = 0, 0, 0, debug?   
+    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?   
     self
   end
 
@@ -167,7 +174,7 @@ require 'strscan'
   
   def consume_separator
     return next_token if seen_separator?
-    @commas, @words, @initials = 0, 0, 0
+    @commas, @words, @initials, @suffices = 0, 0, 0, 0
     [:AND, :AND]
   end
   
@@ -178,7 +185,14 @@ require 'strscan'
 
   def consume_word(type, word)
     @words += 1
-    @initials += 1 if type == :UWORD && word =~ /^\s*[[:alpha:]]\.\s*$/
+
+    case type
+    when :UWORD
+      @initials += 1 if word =~ /^\s*[[:alpha:]]\.\s*$/
+    when :SUFFIX
+      @suffices += 1
+    end
+
     [type, word]
   end
 
@@ -187,12 +201,7 @@ require 'strscan'
   end
 
   def suffix?
-    seen_suffix? || will_see_suffix?
-  end
-  
-  def seen_suffix?
-    return false unless stack.length > 1
-    last_token == :COMMA || last_token =~ suffix
+    !@suffices.zero? || will_see_suffix?
   end
   
   def will_see_suffix?
@@ -204,7 +213,8 @@ require 'strscan'
   end
 
   def seen_full_name?
-    prefer_comma_as_separator? && @words > 1 && (@initials > 0 || !will_see_initial?)
+    prefer_comma_as_separator? && @words > 1 &&
+      (@initials > 0 || !will_see_initial?) && !will_see_suffix?
   end
 
   def next_token
@@ -223,6 +233,8 @@ require 'strscan'
       next_token
     when input.scan(title)
       consume_word(:TITLE, input.matched.strip)
+    when input.scan(suffix)
+      consume_word(:SUFFIX, input.matched.strip)
     when input.scan(appellation)
       [:APPELLATION, input.matched.strip]
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{comma}]*/)

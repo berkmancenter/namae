@@ -40,9 +40,9 @@ Feature: Parse BibTeX-style names
     | bb CC dd EE, AA | AA         | bb CC dd   | EE      |    |
     | bb, AA          | AA         |            | bb      |    |
     | BB,             |            |            | BB      |    |
-    | bb CC,XX, AA    | AA         | bb         | CC      | XX |
-    | bb CC,xx, AA    | AA         | bb         | CC      | xx |
-    | BB,, AA         | AA         |            | BB      |    |
+    | bb CC,II, AA    | AA         | bb         | CC      | II |
+    | bb CC,jr, AA    | AA         | bb         | CC      | jr |
+#    | BB,, AA         | AA         |            | BB      |    |
     | CC dd BB, AA    | AA         | CC dd      | BB      |    |
     | BB, AA          | AA         |            | BB      |    |
 
