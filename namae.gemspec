@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "namae"
-  s.version = "0.7.1"
+  s.version = "0.8.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sylvester Keil", "Dan Collis-Puro"]
-  s.date = "2012-11-08"
+  s.date = "2013-08-23"
   s.description = " Namae (\u{540d}\u{524d}) is a parser for human names. It recognizes personal names of various cultural backgrounds and tries to split them into their component parts (e.g., given and family names, honorifics etc.). "
   s.email = ["sylvester@keil.or.at", "dan@collispuro.com"]
   s.extra_rdoc_files = [
@@ -49,31 +49,31 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/berkmancenter/namae"
   s.licenses = ["AGPL"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "2.0.3"
   s.summary = "Namae (\u{540d}\u{524d}) parses personal names and splits them into their component parts."
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<racc>, ["~> 1.4.8"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.1"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
-      s.add_development_dependency(%q<ZenTest>, ["~> 4.8.0"])
+      s.add_development_dependency(%q<ZenTest>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
+      s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<racc>, ["~> 1.4.8"])
-      s.add_dependency(%q<bundler>, ["~> 1.1"])
       s.add_dependency(%q<simplecov>, [">= 0"])
-      s.add_dependency(%q<ZenTest>, ["~> 4.8.0"])
+      s.add_dependency(%q<ZenTest>, [">= 0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
+      s.add_dependency(%q<yard>, [">= 0"])
     end
   else
     s.add_dependency(%q<racc>, ["~> 1.4.8"])
-    s.add_dependency(%q<bundler>, ["~> 1.1"])
     s.add_dependency(%q<simplecov>, [">= 0"])
-    s.add_dependency(%q<ZenTest>, ["~> 4.8.0"])
+    s.add_dependency(%q<ZenTest>, [">= 0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
+    s.add_dependency(%q<yard>, [">= 0"])
   end
 end
 
