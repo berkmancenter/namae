@@ -16,26 +16,26 @@ Quickstart
    a list of parsed names:
 
         require 'namae'
-        
+
         names = Namae.parse 'Yukihiro "Matz" Matsumoto'
         #-> [#<Name family="Matsumoto" given="Yukihiro" nick="Matz">]
 
 3. Use the name objects to access the individual parts:
 
         matz = names[0]
-        
+
         matz.nick
         #-> "Matz"
-        
+
         matz.family
         #-> "Matsumoto"
-        
+
         matz.initials
         #-> "Y.M."
-        
+
         matz.initials :expand => true
         #-> "Y. Matsumoto"
-        
+
         matz.initials :dots => false
         #-> "YM"
 
@@ -89,7 +89,7 @@ names are written in display-order:
 
     Namae.parse 'Prof. Donald Ervin Knuth'
     #-> [#<Name family="Knuth" given="Donald Ervin" title="Prof.">]
-    
+
     Namae.parse 'Ms. Sofia Kovaleskaya'
     #-> [#<Name family="Kovaleskaya" given="Sofia" appellation="Ms.">]
 
@@ -143,7 +143,7 @@ The Namae source code is [hosted on GitHub](https://github.com/berkmancenter/nam
 You can check out a copy of the latest code using Git:
 
     $ git clone https://github.com/berkmancenter/namae.git
-    
+
 To get started, generate the parser and run all tests:
 
     $ cd namae
@@ -169,6 +169,6 @@ Namae was written as a part of a Google Summer of Code project. Thanks Google!
 Copyright
 ---------
 Copyright (c) 2012 President and Fellows of Harvard College.
-Copyright (c) 2013 Sylvester Keil
+Copyright (c) 2013-2014 Sylvester Keil
 
 Namae is dual licensed under the AGPL and a BSD-style license.
