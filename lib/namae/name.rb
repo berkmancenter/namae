@@ -1,11 +1,11 @@
 module Namae
-  
+
   # A Name represents a single personal name, exposing its constituent
   # parts (e.g., family name, given name etc.). Name instances are typically
   # created and returned from {Namae.parse Namae.parse}.
   #
   #     name = Namae.parse('Yukihiro "Matz" Matsumoto')[0]
-  #     
+  #
   #     name.family #=> Matsumoto
   #     name.nick #=> Matz
   #     name.given #=> Yukihiro
@@ -23,7 +23,7 @@ module Namae
         :spaces => false
       }
     }
-    
+
     class << self
       attr_reader :parts, :defaults
 
@@ -34,7 +34,7 @@ module Namae
       def parse!(name)
         Parser.instance.parse!(name)[0] || new
       end
-      
+
       # @param name [String] the name to be parsed
       # @return [Name] the parsed name
       def parse(name)
@@ -44,7 +44,7 @@ module Namae
       end
     end
 
-    
+
     # @param attributes [Hash] the individual parts of the name
     # @param sanitize [Boolean] whether or not to apply extra
     #   sanitation rules
@@ -63,7 +63,7 @@ module Namae
         end
       end
     end
-  
+
     # @return [String] the name in sort order
     def sort_order(delimiter = ', ')
       [family_part, given_part].reject(&:empty?).join(delimiter)
@@ -86,15 +86,15 @@ module Namae
     def merge(other)
       raise ArgumentError, "failed to merge #{other.class} into Name" unless
         other.respond_to?(:each_pair)
-        
+
       other.each_pair do |part, value|
         writer = "#{part}="
         send(writer, value) if !value.nil? && respond_to?(writer)
       end
-      
+
       self
     end
-    
+
     # @param options [Hash] the options to create the initials
     #
     # @option options [true,false] :expand (false) whether or not to expand the family name
@@ -104,7 +104,7 @@ module Namae
     # @return [String] the name's initials.
     def initials(options = {})
       options = Name.defaults[:initials].merge(options)
-      
+
       if options[:expand]
         [initials_of(given_part, options), family].compact.join(' ')
       else
@@ -126,25 +126,25 @@ module Namae
     def values_at(*arguments)
       super(*arguments.flatten.map { |k| k.is_a?(Symbol) ? Name.parts.index(k) : k })
     end
-    
-    
+
+
     # @return [String] a string representation of the name
     def inspect
       "#<Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if v }.compact.join(' ')}>"
     end
-    
+
     alias to_s display_order
 
     private
-    
+
     def family_part
       [particle, family].compact.join(' ')
     end
-    
+
     def given_part
       [given, dropping_particle].compact.join(' ')
     end
-    
+
     # @param name [String] a name or part of a name
     # @return [String] the initials of the passed-in name
     def initials_of(name, options = {})
