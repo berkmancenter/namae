@@ -33,3 +33,4 @@ pkg
 *.rbc
 .rbx
 
+.ruby-version
