@@ -23,3 +23,7 @@ end
 group :osx do
   gem 'autotest-fsevent'
 end
+
+platform :rbx do
+  gem 'rubysl'
+end
