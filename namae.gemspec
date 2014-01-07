@@ -58,26 +58,26 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<racc>, ["= 1.4.9"])
-      s.add_development_dependency(%q<simplecov>, [">= 0"])
-      s.add_development_dependency(%q<rubinius-coverage>, [">= 0"])
-      s.add_development_dependency(%q<ZenTest>, [">= 0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
-      s.add_development_dependency(%q<yard>, [">= 0"])
+      s.add_development_dependency(%q<simplecov>, ["~> 0.8"])
+      s.add_development_dependency(%q<rubinius-coverage>, ["~> 2.0"])
+      s.add_development_dependency(%q<ZenTest>, ["~> 4.9"])
+      s.add_development_dependency(%q<jeweler>, ["~> 2.0"])
+      s.add_development_dependency(%q<yard>, ["~> 0.8"])
     else
       s.add_dependency(%q<racc>, ["= 1.4.9"])
-      s.add_dependency(%q<simplecov>, [">= 0"])
-      s.add_dependency(%q<rubinius-coverage>, [">= 0"])
-      s.add_dependency(%q<ZenTest>, [">= 0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
-      s.add_dependency(%q<yard>, [">= 0"])
+      s.add_dependency(%q<simplecov>, ["~> 0.8"])
+      s.add_dependency(%q<rubinius-coverage>, ["~> 2.0"])
+      s.add_dependency(%q<ZenTest>, ["~> 4.9"])
+      s.add_dependency(%q<jeweler>, ["~> 2.0"])
+      s.add_dependency(%q<yard>, ["~> 0.8"])
     end
   else
     s.add_dependency(%q<racc>, ["= 1.4.9"])
-    s.add_dependency(%q<simplecov>, [">= 0"])
-    s.add_dependency(%q<rubinius-coverage>, [">= 0"])
-    s.add_dependency(%q<ZenTest>, [">= 0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
-    s.add_dependency(%q<yard>, [">= 0"])
+    s.add_dependency(%q<simplecov>, ["~> 0.8"])
+    s.add_dependency(%q<rubinius-coverage>, ["~> 2.0"])
+    s.add_dependency(%q<ZenTest>, ["~> 4.9"])
+    s.add_dependency(%q<jeweler>, ["~> 2.0"])
+    s.add_dependency(%q<yard>, ["~> 0.8"])
   end
 end
 
