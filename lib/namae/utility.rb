@@ -17,7 +17,7 @@
 module Namae
 
   module_function
-  
+
   # Parses the passed-in string and returns a list of names. Behaves like
   # parse but returns an empty list for bad input without raising an error.
   #
@@ -38,10 +38,10 @@ module Namae
   def parse!(names)
     Parser.instance.parse!(names)
   end
-  
+
   # @return [Hash] the parser's current configuration.
   def options
     Parser.instance.options
   end
-  
+
 end

@@ -1,12 +1,16 @@
 begin
-  require 'simplecov'
+  require 'simplecov' 
 rescue LoadError
   # ignore
-end
+end unless RUBY_VERSION < '1.9'
 
 begin
-  require 'debugger'
-rescue LoadError
+  if RUBY_ENGINE == 'rbx'
+    require 'rubinius/debugger'
+  else
+    require 'debugger'
+  end
+rescue LoadError, NameError
   # ignore
 end
 
@@ -20,5 +24,5 @@ require 'namae'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
-  
+
 end
