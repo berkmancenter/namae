@@ -27,5 +27,5 @@ end
 
 platform :rbx do
   gem 'rubysl'
-  gem 'racc'
+  gem 'racc', '1.4.9'
 end
