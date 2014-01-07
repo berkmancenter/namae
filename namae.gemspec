@@ -57,8 +57,6 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rubysl>, [">= 0"])
-      s.add_runtime_dependency(%q<racc>, ["= 1.4.9"])
       s.add_development_dependency(%q<racc>, ["= 1.4.9"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<rubinius-coverage>, [">= 0"])
@@ -66,8 +64,6 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
-      s.add_dependency(%q<rubysl>, [">= 0"])
-      s.add_dependency(%q<racc>, ["= 1.4.9"])
       s.add_dependency(%q<racc>, ["= 1.4.9"])
       s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<rubinius-coverage>, [">= 0"])
@@ -76,8 +72,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rubysl>, [">= 0"])
-    s.add_dependency(%q<racc>, ["= 1.4.9"])
     s.add_dependency(%q<racc>, ["= 1.4.9"])
     s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<rubinius-coverage>, [">= 0"])

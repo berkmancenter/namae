@@ -25,7 +25,9 @@ group :osx do
   gem 'autotest-fsevent'
 end
 
-platform :rbx do
-  gem 'rubysl'
-  gem 'racc', '1.4.9'
+group :travis do
+  platform :rbx do
+    gem 'rubysl', '~>2.0'
+    gem 'racc', '1.4.9'
+  end
 end
