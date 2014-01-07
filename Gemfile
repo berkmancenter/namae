@@ -27,4 +27,5 @@ end
 
 platform :rbx do
   gem 'rubysl'
+  gem 'racc'
 end
