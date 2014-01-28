@@ -10,7 +10,7 @@ end
 group :development do
   gem 'simplecov', '~>0.8', :require => false, :platforms => [:ruby_19, :ruby_20, :ruby_21]
   gem 'rubinius-coverage', '~>2.0', :platform => :rbx
-  gem 'coveralls', :require => false
+  gem 'coveralls', '~>0.7', :require => false
   gem 'racc', '1.4.9', :platform => [:ruby]
 end
 
