@@ -16,7 +16,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
 
   include Singleton
 
-  attr_reader :options
+  attr_reader :options, :input
 
   def initialize
     @input, @options = StringScanner.new(''), {
@@ -174,8 +174,6 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
     raise ArgumentError,
       "Failed to parse name: unexpected '#{value}' at #{stack.inspect}"
   end
-
-  attr_reader :input
 
 # -*- racc -*-
 ...end parser.y/module_eval...

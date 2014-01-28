@@ -97,7 +97,7 @@ require 'strscan'
 
   include Singleton
 
-  attr_reader :options
+  attr_reader :options, :input
 
   def initialize
     @input, @options = StringScanner.new(''), {
@@ -255,7 +255,5 @@ require 'strscan'
     raise ArgumentError,
       "Failed to parse name: unexpected '#{value}' at #{stack.inspect}"
   end
-
-  attr_reader :input
 
 # -*- racc -*-
