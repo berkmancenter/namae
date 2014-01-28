@@ -4,7 +4,8 @@ Namae is a parser for human names. It recognizes personal names of various
 cultural backgrounds and tries to split them into their component parts
 (e.g., given and family names, honorifics etc.).
 
-[![Build Status](https://secure.travis-ci.org/berkmancenter/namae.png)](http://travis-ci.org/berkmancenter/namae)
+[![Build Status](https://secure.travis-ci.org/inukshuk/namae.png)](http://travis-ci.org/inukshuk/namae)
+[![Coverage Status](https://coveralls.io/repos/inukshuk/namae/badge.png)](https://coveralls.io/r/inukshuk/namae)
 
 Quickstart
 ----------
@@ -148,9 +149,8 @@ To get started, generate the parser and run all tests:
 
     $ cd namae
     $ bundle install
-    $ rake racc
-    $ rake features
-    $ rake spec
+    $ bundle exec rake features
+    $ bundle exec rake spec
 
 If you've found a bug or have a question, please open an issue on the
 [issue tracker](https://github.com/berkmancenter/namae/issues). Or, for extra
