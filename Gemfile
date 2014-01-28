@@ -6,10 +6,15 @@ group :test do
   gem 'cucumber', '~>1.3'
 end
 
+
 group :development do
-  gem 'racc', '1.4.9', :platform => [:ruby]
   gem 'simplecov', '~>0.8', :require => false, :platforms => [:ruby_19, :ruby_20, :ruby_21]
   gem 'rubinius-coverage', '~>2.0', :platform => :rbx
+  gem 'coveralls', :require => false
+  gem 'racc', '1.4.9', :platform => [:ruby]
+end
+
+group :optional do
   gem 'ZenTest', '~>4.9'
   gem 'jeweler', '~> 2.0'
   gem 'yard', '~>0.8'
@@ -25,9 +30,6 @@ group :osx do
   gem 'autotest-fsevent'
 end
 
-group :travis do
-  platform :rbx do
-    gem 'rubysl', '~>2.0'
-    gem 'racc', '1.4.9'
-  end
+platform :rbx do
+  gem 'rubysl', '~>2.0'
 end

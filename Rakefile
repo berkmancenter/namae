@@ -58,6 +58,10 @@ Cucumber::Rake::Task.new(:features)
 
 task :default => [:spec, :features]
 
+require 'coveralls/rake/task'
+Coveralls::RakeTask.new
+task :test_with_coveralls => [:spec, :features, 'coveralls:push']
+
 begin
   require 'yard'
   YARD::Rake::YardocTask.new

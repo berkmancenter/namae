@@ -15,9 +15,9 @@ module Namae
 module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
 
   include Singleton
-    
+
   attr_reader :options
-  
+
   def initialize
     @input, @options = StringScanner.new(''), {
       :debug => false,
@@ -29,15 +29,15 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
-  
+
   def debug?
     options[:debug] || ENV['DEBUG']
   end
-  
+
   def separator
     options[:separator]
   end
-  
+
   def comma
     options[:comma]
   end
@@ -53,7 +53,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
   def appellation
     options[:appellation]
   end
-  
+
   def prefer_comma_as_separator?
     options[:prefer_comma_as_separator]
   end
@@ -64,39 +64,39 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
     warn e.message if debug?
     []
   end
-  
+
   def parse!(string)
     input.string = normalize(string)
     reset
     do_parse
   end
-  
+
   def normalize(string)
     string = string.strip
     string
   end
-  
+
   def reset
-    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?   
+    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?
     self
   end
 
   private
-  
+
   def stack
     @vstack || @racc_vstack || []
   end
-  
+
   def last_token
     stack[-1]
   end
-  
+
   def consume_separator
     return next_token if seen_separator?
     @commas, @words, @initials, @suffices = 0, 0, 0, 0
     [:AND, :AND]
   end
-  
+
   def consume_comma
     @commas += 1
     [:COMMA, :COMMA]
@@ -122,11 +122,11 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
   def suffix?
     !@suffices.zero? || will_see_suffix?
   end
-  
+
   def will_see_suffix?
     input.peek(8).to_s.strip.split(/\s+/)[0] =~ suffix
   end
-    
+
   def will_see_initial?
     input.peek(6).to_s.strip.split(/\s+/)[0] =~ /[[:alpha:]]\./
   end
@@ -169,12 +169,12 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 97)
         "Failed to parse name #{input.string.inspect}: unmatched data at offset #{input.pos}"
     end
   end
-    
+
   def on_error(tid, value, stack)
     raise ArgumentError,
       "Failed to parse name: unexpected '#{value}' at #{stack.inspect}"
   end
-    
+
   attr_reader :input
 
 # -*- racc -*-
