@@ -17,10 +17,10 @@ rule
        | honorific word          { result = val[0].merge(:family => val[1]) }
        | honorific display_order { result = val[1].merge(val[0]) }
        | sort_order
-  
+
   honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
             | TITLE       { result = Name.new(:title => val[0]) }
-            
+
   display_order : u_words word opt_suffices
        {
          result = Name.new(:given => val[0], :family => val[1], :suffix => val[2])
@@ -43,7 +43,7 @@ rule
        {
          result = Name.new(:particle => val[0], :family => val[1])
        }
-       
+
   sort_order : last COMMA first
        {
          result = Name.new({ :family => val[0], :suffix => val[2][0],
@@ -79,7 +79,7 @@ rule
 
   words : word
         | words word { result = val.join(' ') }
-  
+
   opt_words : /* empty */ | words
 
   word : LWORD | UWORD | PWORD
@@ -96,9 +96,9 @@ require 'strscan'
 ---- inner
 
   include Singleton
-    
+
   attr_reader :options
-  
+
   def initialize
     @input, @options = StringScanner.new(''), {
       :debug => false,
@@ -110,15 +110,15 @@ require 'strscan'
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
   end
-  
+
   def debug?
     options[:debug] || ENV['DEBUG']
   end
-  
+
   def separator
     options[:separator]
   end
-  
+
   def comma
     options[:comma]
   end
@@ -134,7 +134,7 @@ require 'strscan'
   def appellation
     options[:appellation]
   end
-  
+
   def prefer_comma_as_separator?
     options[:prefer_comma_as_separator]
   end
@@ -145,39 +145,39 @@ require 'strscan'
     warn e.message if debug?
     []
   end
-  
+
   def parse!(string)
     input.string = normalize(string)
     reset
     do_parse
   end
-  
+
   def normalize(string)
     string = string.strip
     string
   end
-  
+
   def reset
-    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?   
+    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?
     self
   end
 
   private
-  
+
   def stack
     @vstack || @racc_vstack || []
   end
-  
+
   def last_token
     stack[-1]
   end
-  
+
   def consume_separator
     return next_token if seen_separator?
     @commas, @words, @initials, @suffices = 0, 0, 0, 0
     [:AND, :AND]
   end
-  
+
   def consume_comma
     @commas += 1
     [:COMMA, :COMMA]
@@ -203,11 +203,11 @@ require 'strscan'
   def suffix?
     !@suffices.zero? || will_see_suffix?
   end
-  
+
   def will_see_suffix?
     input.peek(8).to_s.strip.split(/\s+/)[0] =~ suffix
   end
-    
+
   def will_see_initial?
     input.peek(6).to_s.strip.split(/\s+/)[0] =~ /[[:alpha:]]\./
   end
@@ -250,12 +250,12 @@ require 'strscan'
         "Failed to parse name #{input.string.inspect}: unmatched data at offset #{input.pos}"
     end
   end
-    
+
   def on_error(tid, value, stack)
     raise ArgumentError,
       "Failed to parse name: unexpected '#{value}' at #{stack.inspect}"
   end
-    
+
   attr_reader :input
 
 # -*- racc -*-
