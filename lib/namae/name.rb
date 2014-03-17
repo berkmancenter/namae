@@ -1,5 +1,56 @@
 module Namae
 
+  # NameFormatting can be mixed in by an object providing individual
+  # name parts (family, given, suffix, particle, etc.) to add support
+  # for name formatting.
+  module NameFormatting
+
+    # @return [String] the name in sort order
+    def sort_order(delimiter = ', ')
+      [family_part, given_part].reject(&:empty?).join(delimiter)
+    end
+
+    # @return [String] the name in display order
+    def display_order
+      [given_part, family_part].reject(&:empty?).join(' ')
+    end
+
+    # @param options [Hash] the options to create the initials
+    #
+    # @option options [true,false] :expand (false) whether or not to expand the family name
+    # @option options [true,false] :dots (true) whether or not to print dots between the initials
+    # @option options [true,false] :spaces (false) whether or not to print spaces between the initals
+    #
+    # @return [String] the name's initials.
+    def initials(options = {})
+      options = Name.defaults[:initials].merge(options)
+
+      if options[:expand]
+        [initials_of(given_part, options), family].compact.join(' ')
+      else
+        initials_of([given_part, family_part].join(' '), options)
+      end
+    end
+
+    private
+
+    def family_part
+      [particle, family].compact.join(' ')
+    end
+
+    def given_part
+      [given, dropping_particle].compact.join(' ')
+    end
+
+    # @param name [String] a name or part of a name
+    # @return [String] the initials of the passed-in name
+    def initials_of(name, options = {})
+      i = name.gsub(/([[:upper:]])[[:lower:]]+/, options[:dots] ? '\1.' : '\1')
+      i.gsub!(/\s+/, '') unless options[:spaces]
+      i
+    end
+  end
+
   # A Name represents a single personal name, exposing its constituent
   # parts (e.g., family name, given name etc.). Name instances are typically
   # created and returned from {Namae.parse Namae.parse}.
@@ -13,7 +64,9 @@ module Namae
   class Name < Struct.new :family, :given, :suffix, :particle,
     :dropping_particle, :nick, :appellation, :title
 
-    # rbx compatibility
+    include NameFormatting
+
+    # RBX compatibility
     @parts = members.map(&:to_sym).freeze
 
     @defaults = {
@@ -64,16 +117,6 @@ module Namae
       end
     end
 
-    # @return [String] the name in sort order
-    def sort_order(delimiter = ', ')
-      [family_part, given_part].reject(&:empty?).join(delimiter)
-    end
-
-    # @return [String] the name in display order
-    def display_order
-      [given_part, family_part].reject(&:empty?).join(' ')
-    end
-
     # @return [Boolean] whether or not all the name components are nil.
     def empty?
       values.compact.empty?
@@ -95,22 +138,6 @@ module Namae
       self
     end
 
-    # @param options [Hash] the options to create the initials
-    #
-    # @option options [true,false] :expand (false) whether or not to expand the family name
-    # @option options [true,false] :dots (true) whether or not to print dots between the initials
-    # @option options [true,false] :spaces (false) whether or not to print spaces between the initals
-    #
-    # @return [String] the name's initials.
-    def initials(options = {})
-      options = Name.defaults[:initials].merge(options)
-
-      if options[:expand]
-        [initials_of(given_part, options), family].compact.join(' ')
-      else
-        initials_of([given_part, family_part].join(' '), options)
-      end
-    end
 
     # @overload values_at(selector, ... )
     #   Returns an array containing the elements in self corresponding to
@@ -134,24 +161,6 @@ module Namae
     end
 
     alias to_s display_order
-
-    private
-
-    def family_part
-      [particle, family].compact.join(' ')
-    end
-
-    def given_part
-      [given, dropping_particle].compact.join(' ')
-    end
-
-    # @param name [String] a name or part of a name
-    # @return [String] the initials of the passed-in name
-    def initials_of(name, options = {})
-      i = name.gsub(/([[:upper:]])[[:lower:]]+/, options[:dots] ? '\1.' : '\1')
-      i.gsub!(/\s+/, '') unless options[:spaces]
-      i
-    end
 
   end
 end
