@@ -7,12 +7,12 @@ module Namae
 
     # @return [String] the name in sort order
     def sort_order(delimiter = ', ')
-      [family_part, given_part].reject(&:empty?).join(delimiter)
+      [family_part, suffix, given_part].compact.reject(&:empty?).join(delimiter)
     end
 
     # @return [String] the name in display order
     def display_order
-      [given_part, family_part].reject(&:empty?).join(' ')
+      [given_part, family_part, suffix].compact.reject(&:empty?).join(' ')
     end
 
     # @param options [Hash] the options to create the initials

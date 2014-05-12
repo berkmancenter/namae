@@ -88,6 +88,11 @@ module Namae
       it 'returns only the family if there is no given name' do
         Name.new(:family => 'Suzuki').sort_order.should == 'Suzuki'
       end
+
+      it 'includes the suffix' do
+        Name.new(:family => 'Griffey', :suffix => 'Jr.').sort_order.should == 'Griffey, Jr.'
+        Name.new(:family => 'Griffey', :given => 'Ken', :suffix => 'Jr.').sort_order.should == 'Griffey, Jr., Ken'
+      end
     end
 
     describe '#display_order' do
@@ -105,6 +110,11 @@ module Namae
 
       it 'returns only the family if there is no given name' do
         Name.new(:family => 'Suzuki').display_order.should == 'Suzuki'
+      end
+
+      it 'includes the suffix' do
+        Name.new(:family => 'Griffey', :suffix => 'Jr.').display_order.should == 'Griffey Jr.'
+        Name.new(:family => 'Griffey', :given => 'Ken', :suffix => 'Jr.').display_order.should == 'Ken Griffey Jr.'
       end
     end
 
