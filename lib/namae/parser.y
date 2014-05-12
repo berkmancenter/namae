@@ -1,4 +1,5 @@
 # -*- ruby -*-
+# vi: set ft=ruby :
 
 class Namae::Parser
 
@@ -209,7 +210,7 @@ require 'strscan'
   end
 
   def will_see_initial?
-    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /[[:alpha:]]\./
+    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /^[[:alpha:]]\b/
   end
 
   def seen_full_name?

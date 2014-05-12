@@ -62,7 +62,7 @@ Feature: Parse a list of names
       | Dennis | Ritchie   |
       | Donald | Knuth     |
 
-  @list @wip
+  @list
   Scenario: A list of names separated by commas
   	Given a parser that prefers commas as separators
     When I parse the names "G. Proctor, M. Cooper, P. Sanders & B. Malcom"
@@ -73,3 +73,16 @@ Feature: Parse a list of names
       | M.    | Cooper  |
       | P.    | Sanders |
       | B.    | Malcom  |
+
+  Scenario: A list of names with particles separated by commas
+  	Given a parser that prefers commas as separators
+    When I parse the names "Di Proctor, M., von Cooper, P."
+    Then the names should be:
+      | given | family     |
+      | M.    | Di Proctor |
+      | P.    | Cooper     |
+    When I parse the names "Di Proctor, M, von Cooper, P"
+    Then the names should be:
+      | given | family     |
+      | M     | Di Proctor |
+      | P     | Cooper     |
