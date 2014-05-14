@@ -107,7 +107,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 98)
 
     case type
     when :UWORD
-      @initials += 1 if word =~ /^\s*[[:alpha:]]\.\s*$/
+      @initials += 1 if word =~ /^[[:upper:]]+\b/
     when :SUFFIX
       @suffices += 1
     end
@@ -128,7 +128,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 98)
   end
 
   def will_see_initial?
-    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /^[[:alpha:]]\b/
+    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /^[[:upper:]]+\b/
   end
 
   def seen_full_name?

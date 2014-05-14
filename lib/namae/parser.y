@@ -189,7 +189,7 @@ require 'strscan'
 
     case type
     when :UWORD
-      @initials += 1 if word =~ /^\s*[[:alpha:]]\.\s*$/
+      @initials += 1 if word =~ /^[[:upper:]]+\b/
     when :SUFFIX
       @suffices += 1
     end
@@ -210,7 +210,7 @@ require 'strscan'
   end
 
   def will_see_initial?
-    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /^[[:alpha:]]\b/
+    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /^[[:upper:]]+\b/
   end
 
   def seen_full_name?
