@@ -2,7 +2,7 @@ module Namae
   module Version
     MAJOR = 0
     MINOR = 8
-    PATCH = 6
+    PATCH = 7
     BUILD = nil
 
     STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.').freeze
