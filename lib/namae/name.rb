@@ -49,6 +49,27 @@ module Namae
       i.gsub!(/\s+/, '') unless options[:spaces]
       i
     end
+
+    # @param name [String] a name or part of a name
+    # @return [String] the passed-in name with normalized initials
+    def existing_initials_of(name, options = {})
+      return unless name
+
+      i = name.dup
+
+      i.gsub!(/\.+/, '')
+      i.gsub!(/\b[[:upper:]]+\b/) { |m| m.chars.join(' ') }
+
+      if options[:dots]
+        i.gsub!(/\b([[:upper:]])\b/, '\1.')
+      end
+
+      if !options[:spaces]
+        i.gsub!(/\b([[:upper:]]\.?)\s+/, '\1')
+      end
+
+      i
+    end
   end
 
   # A Name represents a single personal name, exposing its constituent
@@ -154,6 +175,13 @@ module Namae
       super(*arguments.flatten.map { |k| k.is_a?(Symbol) ? Name.parts.index(k) : k })
     end
 
+    def normalize_initials(options = {})
+      return self if given.nil?
+
+      options = Name.defaults[:initials].merge(options)
+      self.given = existing_initials_of given, options
+      self
+    end
 
     # @return [String] a string representation of the name
     def inspect

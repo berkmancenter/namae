@@ -48,6 +48,17 @@ module Namae
       end
     end
 
+    describe '#normalize_initials' do
+      it "adds dots to existing initials" do
+        expect(Name.new(:given => 'Edgar A').normalize_initials.given).to eq('Edgar A.')
+        expect(Name.new(:given => 'A').normalize_initials.given).to eq('A.')
+        expect(Name.new(:given => 'E A').normalize_initials.given).to eq('E.A.')
+        expect(Name.new(:given => 'EA').normalize_initials.given).to eq('E.A.')
+        expect(Name.new(:given => 'JFK').normalize_initials.given).to eq('J.F.K.')
+        expect(Name.new(:given => 'E-A').normalize_initials.given).to eq('E.-A.')
+      end
+    end
+
     describe '#merge' do
       it 'merges the attributes in the given hash into the name' do
         expect(Name.new.merge(:family => 'foo').family).to eq('foo')
