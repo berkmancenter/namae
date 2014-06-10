@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 group :test do
-  gem 'rspec', '~>2.14'
+  gem 'rspec', '~>3.0'
   gem 'rake', '~>10.1'
   gem 'cucumber', '~>1.3'
 end

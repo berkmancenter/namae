@@ -13,24 +13,28 @@ end
 
 Then /^the BibTeX parts should be:$/ do |table|
   table.hashes.each do |row|
-    @name.values_at(:given, :particle, :family, :suffix).map(&:to_s).should ==
-      row.values_at('first', 'von', 'last', 'jr')
+    expect(
+      @name.values_at(:given, :particle, :family, :suffix).map(&:to_s)
+    ).to eq(row.values_at('first', 'von', 'last', 'jr'))
   end
 end
 
 Then /^the parts should be:$/ do |table|
   table.hashes.each do |row|
-    @name.values_at(:given, :particle, :family, :suffix, :title, :appellation, :nick).map(&:to_s).should ==
-      row.values_at('given', 'particle', 'family', 'suffix', 'title', 'appellation', 'nick')
+    expect(
+      @name.values_at(:given, :particle, :family, :suffix, :title, :appellation, :nick).map(&:to_s)
+    ).to eq(row.values_at('given', 'particle', 'family', 'suffix', 'title', 'appellation', 'nick'))
   end
 end
 
 Then /^there should be (\d+) names$/ do |count|
-  @names.length.should == count.to_i
+  expect(@names.length).to eq(count.to_i)
 end
 
 Then /^the names should be:$/ do |table|
   table.hashes.each_with_index do |row, i|
-    @names[i].values_at(*row.keys.map(&:to_sym)).map(&:to_s).should == row.values
+    expect(
+      @names[i].values_at(*row.keys.map(&:to_sym)).map(&:to_s)
+    ).to eq(row.values)
   end
 end
