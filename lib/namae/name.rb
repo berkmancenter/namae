@@ -58,7 +58,7 @@ module Namae
       i = name.dup
 
       i.gsub!(/\.+/, '')
-      i.gsub!(/\b[[:upper:]]+\b/) { |m| m.chars.join(' ') }
+      i.gsub!(/\b[[:upper:]]+\b/) { |m| m.chars.to_a.join(' ') }
 
       if options[:dots]
         i.gsub!(/\b([[:upper:]])\b/, '\1.')
