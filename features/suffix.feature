@@ -24,6 +24,13 @@ Feature: Parse names with a suffix
       | Ken        | Griffey | Jr.     |
   
   @names @suffix
+  Scenario: Names with a suffix in sort-order with no comma
+    When I parse the names "Griffey, Ken Jr."
+    Then the names should be:
+      | given      | family  | suffix  |
+      | Ken        | Griffey | Jr.     |
+
+  @names @suffix
   Scenario: Names with a suffix in display-order no comma
     When I parse the names "Ken Griffey Jr."
     Then the names should be:

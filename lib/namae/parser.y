@@ -68,10 +68,10 @@ rule
 
   last : LWORD | u_words
 
-  first : opt_words             { result = [nil,val[0]] }
-        | words COMMA suffices  { result = [val[2],val[0]] }
-        | suffices              { result = [val[0],nil] }
-        | suffices COMMA words  { result = [val[0],val[2]] }
+  first : opt_words                 { result = [nil,val[0]] }
+        | words opt_comma suffices  { result = [val[2],val[0]] }
+        | suffices                  { result = [val[0],nil] }
+        | suffices COMMA words      { result = [val[0],val[2]] }
 
   u_words : u_word
           | u_words u_word { result = val.join(' ') }
@@ -81,6 +81,7 @@ rule
   words : word
         | words word { result = val.join(' ') }
 
+  opt_comma : /* empty */ | COMMA
   opt_words : /* empty */ | words
 
   word : LWORD | UWORD | PWORD
