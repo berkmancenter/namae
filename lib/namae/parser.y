@@ -22,9 +22,9 @@ rule
   honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
             | TITLE       { result = Name.new(:title => val[0]) }
 
-  display_order : u_words word opt_suffices
+  display_order : u_words word opt_suffices opt_titles
        {
-         result = Name.new(:given => val[0], :family => val[1], :suffix => val[2])
+         result = Name.new(:given => val[0], :family => val[1], :suffix => val[2], :title => val[3])
        }
        | u_words NICK last
        {
@@ -90,6 +90,11 @@ rule
 
   suffices : SUFFIX
            | suffices SUFFIX { result = val.join(' ') }
+
+  opt_titles : /* empty */ | titles
+
+  titles : TITLE
+         | titles TITLE { result = val.join(' ') }
 
 ---- header
 require 'singleton'
