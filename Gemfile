@@ -21,8 +21,8 @@ group :optional do
 end
 
 group :debug do
-  gem 'debugger', '~>1.6', :platform => [:mri_20, :mri_19]
-  gem 'byebug', '~>3.5', :platform => [:mri_21, :mri_22]
+  gem 'debugger', '~>1.6', :platform => [:mri_19]
+  gem 'byebug', '~>3.5', :platform => :mri if RUBY_VERSION > '2.0'
   gem 'rubinius-compiler', '~>2.0', :platform => :rbx
   gem 'rubinius-debugger', '~>2.0', :platform => :rbx
 end
