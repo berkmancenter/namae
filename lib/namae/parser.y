@@ -24,16 +24,19 @@ rule
 
   display_order : u_words word opt_suffices opt_titles
        {
-         result = Name.new(:given => val[0], :family => val[1], :suffix => val[2], :title => val[3])
+         result = Name.new(:given => val[0], :family => val[1],
+           :suffix => val[2], :title => val[3])
        }
-       | u_words NICK last
-       {
-         result = Name.new(:given => val[0], :nick => val[1], :family => val[2])
-       }
-       | u_words NICK von last
+       | u_words NICK last opt_suffices opt_titles
        {
          result = Name.new(:given => val[0], :nick => val[1],
-           :particle => val[2], :family => val[3])
+           :family => val[2], :suffix => val[3], :title => val[4])
+       }
+       | u_words NICK von last opt_suffices opt_titles
+       {
+         result = Name.new(:given => val[0], :nick => val[1],
+           :particle => val[2], :family => val[3],
+           :suffix => val[4], :title => val[5])
        }
        | u_words von last
        {

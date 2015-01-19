@@ -118,6 +118,14 @@ module Namae
             expect(parser.parse!('Yukihiro "Matz" Matsumoto')[0].values_at(:given, :family, :nick)).to eq(%w{Yukihiro Matsumoto Matz})
           end
 
+          it 'parses appellation and nick in \'Mr. Yukihiro "Matz" Matsumoto\'' do
+            expect(parser.parse!('Mr. Yukihiro "Matz" Matsumoto')[0].values_at(:appellation, :nick)).to eq(%w{Mr. Matz})
+          end
+
+          it 'parses suffix and nick in \'Yukihiro "Matz" Matsumoto Jr.\'' do
+            expect(parser.parse!('Yukihiro "Matz" Matsumoto Jr.')[0].values_at(:suffix, :nick)).to eq(%w{Jr. Matz})
+          end
+
           it 'parses given and family name in "Poe, Edgar A."' do
             expect(parser.parse!('Poe, Edgar A.')[0].values_at(:given, :family)).to eq(['Edgar A.', 'Poe'])
           end

@@ -25,3 +25,10 @@ Feature: Parse the names in the Readme file
     Scenarios: Readme examples (sort-order)
       | name                         | given        | particle | family           | suffix | title | appellation | nick |
       | Carreño Quiñones, María-Jose | María-Jose   |          | Carreño Quiñones |        |       |             |      |
+
+    @issues @appellation @nick @suffix
+    Scenarios: Nicknames Appellations and Suffices
+      | name                              | given        | particle | family       | suffix | title     | appellation | nick |
+      | Mr. Yukihiro "Matz" Matsumoto     | Yukihiro     |          | Matsumoto    |        |           | Mr.         | Matz |
+      | Yukihiro "Matz" Matsumoto Sr.     | Yukihiro     |          | Matsumoto    | Sr.    |           |             | Matz |
+      | Mr. Yukihiro "Matz" Matsumoto Sr. | Yukihiro     |          | Matsumoto    | Sr.    |           | Mr.         | Matz |

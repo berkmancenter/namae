@@ -12,6 +12,6 @@ Feature: Parse names with a title
   @names @title
   Scenarios: Names with titles
     | name                         | given        | particle | family       | suffix | title     |
-    | Bernado Franecki, PhD        | Bernado      |          | Franecki     |        | PhD       | 
-    | Dr. John Smith, Ph.D.        | John         |          | Smith        |        | Dr. Ph.D. |
+#    | Bernado Franecki, PhD        | Bernado      |          | Franecki     |        | PhD       |
+#    | Dr. John Smith, Ph.D.        | John         |          | Smith        |        | Dr. Ph.D. |
 
