@@ -8,10 +8,10 @@ end
 
 
 group :development do
-  gem 'simplecov', '~>0.8', :require => false, :platforms => [:ruby_19, :ruby_20, :ruby_21]
+  gem 'simplecov', '~>0.8', :require => false, :platforms => :ruby
   gem 'rubinius-coverage', '~>2.0', :platform => :rbx
   gem 'coveralls', '~>0.7', :require => false
-  gem 'racc', '1.4.9', :platform => [:ruby]
+  gem 'racc', '1.4.9', :platform => :ruby
 end
 
 group :optional do
@@ -21,7 +21,8 @@ group :optional do
 end
 
 group :debug do
-  gem 'debugger', '~>1.6', :platform => [:mri_20, :mri_21, :mri_19]
+  gem 'debugger', '~>1.6', :platform => [:mri_20, :mri_19]
+  gem 'byebug', '~>3.5', :platform => [:mri_21, :mri_22]
   gem 'rubinius-compiler', '~>2.0', :platform => :rbx
   gem 'rubinius-debugger', '~>2.0', :platform => :rbx
 end
