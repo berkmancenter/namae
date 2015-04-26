@@ -44,6 +44,27 @@ module Namae
           end
         end
 
+        describe 'when the next input is ", "' do
+          before { parser.send(:input).string = ', ' }
+          it 'returns a COMMA token' do
+            expect(parser.send(:next_token)).to eq([:COMMA, :COMMA])
+          end
+        end
+
+        describe 'when the next input is "; "' do
+          before { parser.send(:input).string = '; ' }
+          it 'returns an AND token' do
+            expect(parser.send(:next_token)).to eq([:AND, :AND])
+          end
+        end
+
+        describe 'when the next input is "foo;"' do
+          before { parser.send(:input).string = 'foo;' }
+          it 'returns an LWORD token "foo"' do
+            expect(parser.send(:next_token)).to eq([:LWORD, 'foo'])
+          end
+        end
+
         describe 'when the next input is " \'foo bar\' "' do
           before { parser.send(:input).string = " 'foo bar' " }
           it 'returns a NICK token' do
