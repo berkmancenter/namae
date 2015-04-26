@@ -23,7 +23,8 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 107)
       :debug => false,
       :prefer_comma_as_separator => false,
       :comma => ',',
-      :separator => /\s*(\band\b|\&)\s*/i,
+      :stops => ',;',
+      :separator => /\s*(\band\b|\&|;)\s*/i,
       :title => /\s*\b(sir|lord|count(ess)?|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
       :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
@@ -40,6 +41,10 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 107)
 
   def comma
     options[:comma]
+  end
+
+  def stops
+    options[:stops]
   end
 
   def title
@@ -142,7 +147,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 107)
       nil
     when input.scan(separator)
       consume_separator
-    when input.scan(/\s*,\s*/)
+    when input.scan(/\s*#{comma}\s*/)
       if @commas.zero? && !seen_full_name? || @commas == 1 && suffix?
         consume_comma
       else
@@ -156,11 +161,11 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 107)
       consume_word(:SUFFIX, input.matched.strip)
     when input.scan(appellation)
       [:APPELLATION, input.matched.strip]
-    when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{comma}]*/)
+    when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{stops}]*/)
       consume_word(:UWORD, input.matched)
-    when input.scan(/((\\\w+)?\{[^\}]*\})*[[:lower:]][^\s#{comma}]*/)
+    when input.scan(/((\\\w+)?\{[^\}]*\})*[[:lower:]][^\s#{stops}]*/)
       consume_word(:LWORD, input.matched)
-    when input.scan(/(\\\w+)?\{[^\}]*\}[^\s#{comma}]*/)
+    when input.scan(/(\\\w+)?\{[^\}]*\}[^\s#{stops}]*/)
       consume_word(:PWORD, input.matched)
     when input.scan(/('[^'\n]+')|("[^"\n]+")/)
       consume_word(:NICK, input.matched[1...-1])
