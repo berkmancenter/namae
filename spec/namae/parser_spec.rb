@@ -106,6 +106,19 @@ module Namae
             end
           end
         end
+
+        %w{Gen. Col. Maj Capt. Lt. Sgt.}.each do |title|
+          describe "the next token is #{title.inspect}" do
+            before { parser.send(:input).string = title }
+            it 'returns a TITLE token' do
+              expect(parser.send(:next_token)).to eq([:TITLE, title])
+            end
+
+            it 'the input matches the suffix pattern' do
+              expect(parser.title).to match(title)
+            end
+          end
+        end
       end
 
       describe '#parse!' do

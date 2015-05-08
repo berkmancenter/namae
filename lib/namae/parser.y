@@ -116,7 +116,7 @@ require 'strscan'
       :comma => ',',
       :stops => ',;',
       :separator => /\s*(\band\b|\&|;)\s*/i,
-      :title => /\s*\b(sir|lord|count(ess)?|(prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
+      :title => /\s*\b(sir|lord|count(ess)?|(gen|col|maj|capt|lt|sgt|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
       :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
