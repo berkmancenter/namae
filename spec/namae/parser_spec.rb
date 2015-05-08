@@ -107,7 +107,7 @@ module Namae
           end
         end
 
-        %w{Gen. Col. Maj Capt. Lt. Sgt.}.each do |title|
+        %w{Gen. Adm Col. Maj Capt. Cmdr. Lt. Sgt. Cpl Pvt.}.each do |title|
           describe "the next token is #{title.inspect}" do
             before { parser.send(:input).string = title }
             it 'returns a TITLE token' do
