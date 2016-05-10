@@ -25,7 +25,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 107)
       :comma => ',',
       :stops => ',;',
       :separator => /\s*(\band\b|\&|;)\s*/i,
-      :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
+      :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
       :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
       :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
     }
