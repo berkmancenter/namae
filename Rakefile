@@ -23,7 +23,7 @@ begin
     gem.email = ['sylvester@keil.or.at', 'dan@collispuro.com']
     gem.authors = ['Sylvester Keil', 'Dan Collis-Puro']
 
-    gem.license = 'AGPL'
+    gem.license = 'AGPL-3.0'
 
     gem.summary =
       'Namae (名前) parses personal names and splits them into their component parts.'
