@@ -74,7 +74,7 @@ module Namae
 
         %w{Mr. Mr Mrs. Ms Herr Frau Miss}.each do |appellation|
           describe "the next token is #{appellation.inspect}" do
-            before { parser.send(:input).string = appellation }
+            before { parser.reset.send(:input).string = appellation }
             it 'returns an APPELLATION token' do
               expect(parser.send(:next_token)).to eq([:APPELLATION, appellation])
             end

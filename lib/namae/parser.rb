@@ -160,7 +160,11 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 107)
     when input.scan(suffix)
       consume_word(:SUFFIX, input.matched.strip)
     when input.scan(appellation)
-      [:APPELLATION, input.matched.strip]
+      if @words.zero?
+        [:APPELLATION, input.matched.strip]
+      else
+        consume_word(:UWORD, input.matched)
+      end
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{stops}]*/)
       consume_word(:UWORD, input.matched)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:lower:]][^\s#{stops}]*/)

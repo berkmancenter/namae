@@ -20,6 +20,8 @@ Feature: Parse the names in the Readme file
       | Ms. Sofia Kovalevskaya       | Sofia        |          | Kovalevskaya |        |           | Ms.         |      |
       | Countess Ada Lovelace        | Ada          |          | Lovelace     |        | Countess  |             |      |
       | Augusta Ada King             | Augusta Ada  |          | King         |        |           |             |      |
+      | Julia Herr                   | Julia        |          | Herr         |        |           |             |      |
+      | Herr, Julia                  | Julia        |          | Herr         |        |           |             |      |
 
     @readme @sort
     Scenarios: Readme examples (sort-order)
