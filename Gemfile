@@ -8,10 +8,13 @@ end
 
 
 group :development do
+  gem 'racc', '1.4.9', :platform => :ruby
+end
+
+group :coverage do
   gem 'simplecov', '~>0.8', :require => false, :platforms => :ruby
   gem 'rubinius-coverage', '~>2.0', :platform => :rbx
   gem 'coveralls', '~>0.7', :require => false
-  gem 'racc', '1.4.9', :platform => :ruby
 end
 
 group :optional do
@@ -32,8 +35,6 @@ group :osx do
 end
 
 group :rbx do
-  platform :rbx do
-    gem 'rubysl', '~>2.0'
-    gem 'json', '~>1.8'
-  end
+  gem 'rubysl', '~>2.0', :platform => :rbx
+  gem 'json', '~>1.8', :platform => :rbx
 end
