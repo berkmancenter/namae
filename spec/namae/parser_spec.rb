@@ -149,10 +149,6 @@ module Namae
             expect(parser.parse!('Ichiro')[0].given).to eq('Ichiro')
           end
 
-          it 'removes numbers' do
-            expect(parser.parse!('Ichiro 20156')[0].given).to eq('Ichiro')
-          end
-
           it 'treats "Lord Byron" as a title and family name' do
             expect(parser.parse!('Lord Byron')[0].values_at(:family, :title)).to eq(['Byron', 'Lord'])
           end

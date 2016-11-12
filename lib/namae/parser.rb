@@ -77,7 +77,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 107)
   end
 
   def normalize(string)
-    string = string.match(/\D*/).to_s.strip
+    string = string.strip
     string
   end
 
