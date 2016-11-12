@@ -18,8 +18,8 @@ matrix:
     env: WITH_COVERALLS=false
   - rvm: jruby-19mode
     env: WITH_COVERALLS=false
-  - rvm: rbx-2
-    env: WITH_COVERALLS=false
+#  - rvm: rbx-2
+#    env: WITH_COVERALLS=false
 
 install:
   - if [[ $WITH_COVERALLS = "true" ]]; then
