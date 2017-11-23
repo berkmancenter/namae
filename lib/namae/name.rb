@@ -106,7 +106,7 @@ module Namae
       #   contains more than a single name
       # @return [Name] the parsed name
       def parse!(name)
-        Parser.instance.parse!(name)[0] || new
+        Parser.new.parse!(name)[0] || new
       end
 
       # @param name [String] the name to be parsed
