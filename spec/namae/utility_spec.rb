@@ -11,10 +11,10 @@ describe 'Namae' do
       expect(Namae.parse!('')).to be_empty
     end
   end
-    
+
   describe '.options' do
     it 'returns the parse options' do
-      expect(Namae.options).to equal(Namae::Parser.instance.options)
+      expect(Namae.options).to eq(Namae::Parser.new.options)
     end
   end
 

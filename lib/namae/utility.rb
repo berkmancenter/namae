@@ -26,7 +26,7 @@ module Namae
   # @param names [String] the name or names to be parsed
   # @return [Array] the list of parsed names
   def parse(names)
-    Parser.instance.parse(names)
+    Parser.new.parse(names)
   end
 
   # Parses the passed-in string and returns a list of names.
@@ -36,12 +36,12 @@ module Namae
   #
   # @raise [ArgumentError] if the string cannot be parsed.
   def parse!(names)
-    Parser.instance.parse!(names)
+    Parser.new.parse!(names)
   end
 
   # @return [Hash] the parser's current configuration.
   def options
-    Parser.instance.options
+    Parser.new.options
   end
 
 end

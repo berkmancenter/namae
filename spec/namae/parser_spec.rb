@@ -1,12 +1,7 @@
 module Namae
   describe 'Parser' do
-
-    it 'does not respond to .new' do
-      expect(Parser).not_to respond_to(:new)
-    end
-
-    describe '.instance' do
-      let(:parser) { Parser.instance }
+    describe '.new' do
+      let(:parser) { Parser.new }
 
       it 'returns the parser' do
         expect(parser).to be_a(Parser)
@@ -14,7 +9,7 @@ module Namae
 
       describe '#next_token' do
 				before(:each) do
-					Parser.instance.reset
+					parser.reset
 				end
 
         describe 'when the input is empty' do
