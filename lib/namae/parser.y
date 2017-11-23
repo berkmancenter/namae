@@ -100,59 +100,30 @@ rule
          | titles TITLE { result = val.join(' ') }
 
 ---- header
-require 'singleton'
 require 'strscan'
+require 'forwardable'
+require 'namae/parser_options'
 
 ---- inner
 
-  include Singleton
+  extend Forwardable
 
-  attr_reader :options, :input
+  attr_reader :parser_options, :input
 
   def initialize
-    @input, @options = StringScanner.new(''), {
-      :debug => false,
-      :prefer_comma_as_separator => false,
-      :comma => ',',
-      :stops => ',;',
-      :separator => /\s*(\band\b|\&|;)\s*/i,
-      :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
-      :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
-      :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
-    }
+    @input, @parser_options = StringScanner.new(''), ParserOptions.instance
   end
 
-  def debug?
-    options[:debug] || ENV['DEBUG']
-  end
-
-  def separator
-    options[:separator]
-  end
-
-  def comma
-    options[:comma]
-  end
-
-  def stops
-    options[:stops]
-  end
-
-  def title
-    options[:title]
-  end
-
-  def suffix
-    options[:suffix]
-  end
-
-  def appellation
-    options[:appellation]
-  end
-
-  def prefer_comma_as_separator?
-    options[:prefer_comma_as_separator]
-  end
+  def_delegators :parser_options,
+    :options,
+    :debug?,
+    :separator,
+    :comma,
+    :stops,
+    :title,
+    :suffix,
+    :appellation,
+    :prefer_comma_as_separator?
 
   def parse(input)
     parse!(input)
