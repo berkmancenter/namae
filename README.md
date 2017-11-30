@@ -4,9 +4,10 @@ Namae is a parser for human names. It recognizes personal names of various
 cultural backgrounds and tries to split them into their component parts
 (e.g., given and family names, honorifics etc.).
 
-[![Build Status](https://secure.travis-ci.org/inukshuk/namae.png)](http://travis-ci.org/inukshuk/namae)
+[![Build Status](https://travis-ci.org/berkmancenter/namae.svg?branch=master)](https://travis-ci.org/berkmancenter/namae)
+[![Coverage Status](https://coveralls.io/repos/github/inukshuk/namae/badge.svg?branch=master)](https://coveralls.io/github/inukshuk/namae?branch=master)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/namae/badge.png)](https://coveralls.io/r/inukshuk/namae)
-[![Gem Version](https://badge.fury.io/rb/namae.png)](http://badge.fury.io/rb/namae)
+[![Gem Version](https://badge.fury.io/rb/namae.svg)](http://badge.fury.io/rb/namae)
 [![Code Climate](https://codeclimate.com/github/berkmancenter/namae/badges/gpa.svg)](https://codeclimate.com/github/berkmancenter/namae)
 
 Quickstart
@@ -121,6 +122,23 @@ ambiguous. For example, multiple family names are always possible in sort-order:
 Whilst in display-order, multiple family names are only supported when the
 name contains a particle or a nickname.
 
+Configuration
+-------------
+You can tweak some of Namae's parse rules by configuring the parser's
+options. Take a look at `Namae.options` to see your current settings.
+If you want to change the default settings for all parsers, you can run
+`Namae.configure` which will yield the default options (make sure to
+change the configuration before using the parser).
+
+A Note On Thread Safety
+-----------------------
+When using the top-level parse functions, Namae will re-use a thread-local
+parser instance (`Namae::Parser.instance`); the instance is created, using
+the current default options (`Namae::Parser.defaults`). If you need more
+control, you are encouraged to create individual parser instances using
+`Namae::Parser.new`.
+
+
 Rationale
 ---------
 Parsing human names is at once too easy and too hard. When working in the
@@ -171,6 +189,6 @@ Namae was written as a part of a Google Summer of Code project. Thanks Google!
 Copyright
 ---------
 Copyright (c) 2012 President and Fellows of Harvard College.
-Copyright (c) 2013-2014 Sylvester Keil
+Copyright (c) 2013-2017 Sylvester Keil
 
 Namae is dual licensed under the AGPL and a BSD-style license.
