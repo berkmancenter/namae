@@ -187,7 +187,8 @@ Namae was written as a part of a Google Summer of Code project. Thanks Google!
 
 Copyright
 ---------
-Copyright (c) 2012 President and Fellows of Harvard College.
 Copyright (c) 2013-2017 Sylvester Keil
+
+Copyright (c) 2012 President and Fellows of Harvard College.
 
 Namae is dual licensed under the AGPL and a BSD-style license.
