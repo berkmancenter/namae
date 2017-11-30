@@ -13,25 +13,29 @@ module Namae
 
 module_eval(<<'...end parser.y/module_eval...', 'parser.y', 106)
 
+  @defaults = {
+    :debug => false,
+    :prefer_comma_as_separator => false,
+    :comma => ',',
+    :stops => ',;',
+    :separator => /\s*(\band\b|\&|;)\s*/i,
+    :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
+    :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
+    :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
+  }
+
   class << self
+    attr_reader :defaults
+
     def instance
-      @instance ||= new
+      Thread.current[:namae] ||= new
     end
   end
 
   attr_reader :options, :input
 
-  def initialize
-    @options = {
-      :debug => false,
-      :prefer_comma_as_separator => false,
-      :comma => ',',
-      :stops => ',;',
-      :separator => /\s*(\band\b|\&|;)\s*/i,
-      :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
-      :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
-      :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
-    }
+  def initialize(options = {})
+    @options = self.class.defaults.merge(options)
   end
 
   def debug?
