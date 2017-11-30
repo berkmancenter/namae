@@ -5,8 +5,7 @@ cultural backgrounds and tries to split them into their component parts
 (e.g., given and family names, honorifics etc.).
 
 [![Build Status](https://travis-ci.org/berkmancenter/namae.svg?branch=master)](https://travis-ci.org/berkmancenter/namae)
-[![Coverage Status](https://coveralls.io/repos/github/inukshuk/namae/badge.svg?branch=master)](https://coveralls.io/github/inukshuk/namae?branch=master)
-[![Coverage Status](https://coveralls.io/repos/inukshuk/namae/badge.png)](https://coveralls.io/r/inukshuk/namae)
+[![Coverage Status](https://coveralls.io/repos/github/berkmancenter/namae/badge.svg?branch=master)](https://coveralls.io/github/berkmancenter/namae?branch=master)
 [![Gem Version](https://badge.fury.io/rb/namae.svg)](http://badge.fury.io/rb/namae)
 [![Code Climate](https://codeclimate.com/github/berkmancenter/namae/badges/gpa.svg)](https://codeclimate.com/github/berkmancenter/namae)
 
