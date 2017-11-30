@@ -100,12 +100,15 @@ rule
          | titles TITLE { result = val.join(' ') }
 
 ---- header
-require 'singleton'
 require 'strscan'
 
 ---- inner
 
-  include Singleton
+  class << self
+    def instance
+      @instance ||= new
+    end
+  end
 
   attr_reader :options, :input
 

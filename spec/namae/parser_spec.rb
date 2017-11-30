@@ -1,10 +1,5 @@
 module Namae
   describe 'Parser' do
-
-    it 'does not respond to .new' do
-      expect(Parser).not_to respond_to(:new)
-    end
-
     describe '.instance' do
       let(:parser) { Parser.instance }
 
