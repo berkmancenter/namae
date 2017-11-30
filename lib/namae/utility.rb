@@ -44,4 +44,8 @@ module Namae
     Parser.instance.options
   end
 
+  # @yield [Hash] the parser's default configuration.
+  def configure
+    yield Parser.defaults
+  end
 end
