@@ -113,7 +113,7 @@ require 'strscan'
   attr_reader :options, :input
 
   def initialize
-    @input, @options = StringScanner.new(''), {
+    @options = {
       :debug => false,
       :prefer_comma_as_separator => false,
       :comma => ',',
@@ -157,22 +157,21 @@ require 'strscan'
     options[:prefer_comma_as_separator]
   end
 
-  def parse(input)
-    parse!(input)
+  def parse(string)
+    parse!(string)
   rescue => e
     warn e.message if debug?
     []
   end
 
   def parse!(string)
-    input.string = normalize(string)
+    @input = StringScanner.new(normalize(string))
     reset
     do_parse
   end
 
   def normalize(string)
-    string = string.strip
-    string
+    string.scrub.strip
   end
 
   def reset
