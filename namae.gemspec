@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
     "README.md"
   ]
   s.files = [
-    ".autotest",
     ".codeclimate.yml",
     ".coveralls.yml",
     ".document",
@@ -51,7 +50,7 @@ Gem::Specification.new do |s|
     "spec/namae/parser_spec.rb",
     "spec/namae/utility_spec.rb",
     "spec/spec_helper.rb",
-    "spec/thread_safety.rb"
+    "spec/thread_safety_spec.rb"
   ]
   s.homepage = "https://github.com/berkmancenter/namae".freeze
   s.licenses = ["AGPL-3.0".freeze]
