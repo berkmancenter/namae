@@ -23,9 +23,9 @@ matrix:
 
 install:
   - if [[ $WITH_COVERALLS = "true" ]]; then
-      bundle install --without debug osx optional;
+      bundle install --without debug optional;
     else
-      bundle install --without debug osx optional coverage;
+      bundle install --without debug optional coverage;
     fi
 
 script:

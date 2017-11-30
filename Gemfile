@@ -6,7 +6,6 @@ group :test do
   gem 'cucumber', '~> 3.1'
 end
 
-
 group :development do
   gem 'racc', '~> 1.4', :platform => :ruby
 end
@@ -17,7 +16,6 @@ group :coverage do
 end
 
 group :optional do
-  gem 'ZenTest'
   gem 'jeweler'
   gem 'yard'
 end
@@ -25,8 +23,4 @@ end
 group :debug do
   gem 'debugger', :platform => [:mri_19]
   gem 'byebug', :platform => :mri if RUBY_VERSION > '2.0'
-end
-
-group :osx do
-  gem 'autotest-fsevent'
 end
