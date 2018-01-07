@@ -115,7 +115,7 @@ module Namae
           end
         end
 
-        %w{Pastor Pr. Reverend Rev. Elder Deacon Deaconess Father Fr. Vicar}.each do |title|
+        %w{Pastor Pr. Reverend Rev. Elder Deacon Deaconess Father Fr. Vicar Rabbi Cantor}.each do |title|
           describe "the next token is #{title.inspect}" do
             before { parser.send(:input).string = title }
             it 'returns a TITLE token' do
