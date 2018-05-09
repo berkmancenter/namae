@@ -118,8 +118,12 @@ require 'strscan'
   class << self
     attr_reader :defaults
 
-    def instance
-      Thread.current[:namae] ||= new
+    def instance(cached = true)
+      if cached
+        Thread.current[:namae] ||= new
+      else
+        Thread.current[:namae] = new
+      end
     end
   end
 

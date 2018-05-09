@@ -125,9 +125,18 @@ Configuration
 -------------
 You can tweak some of Namae's parse rules by configuring the parser's
 options. Take a look at `Namae.options` to see your current settings.
+
 If you want to change the default settings for all parsers, you can run
-`Namae.configure` which will yield the default options (make sure to
-change the configuration before using the parser).
+`Namae.configure` which will yield the default options.
+
+    Namae.parse('Bob Bailey iv') 
+    #-> [#<struct Namae::Name family="iv", given="Bob Bailey", suffix=nil, ...
+    Namae.configure { |config| config[:suffix] = /\s*\b(jr|sr|[IVX]{2,})(\.|\b)/i }
+    Namae.parse('Bob Bailey iv')
+    #-> [#<struct Namae::Name family="Bailey", given="Bob", suffix="iv", ...
+
+To change the defaults permanantly, update the RACC configuration `lib/namae/parser.y` and
+then run `rake racc`.
 
 A Note On Thread Safety
 -----------------------
