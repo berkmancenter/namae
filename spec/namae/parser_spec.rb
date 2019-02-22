@@ -89,7 +89,7 @@ module Namae
           end
         end
 
-        %w{Ph.D. PhD PHD Dr. Dr Prof.}.each do |title|
+        %w{Ph.D. PhD PHD Dr. Dr Prof. PharmD DO RPh PharmD.}.each do |title|
           describe "the next token is #{title.inspect}" do
             before { parser.send(:input).string = title }
             it 'returns a TITLE token' do
@@ -103,6 +103,19 @@ module Namae
         end
 
         %w{Gen. Adm Col. Maj Capt. Cmdr. Lt. Sgt. Cpl Pvt.}.each do |title|
+          describe "the next token is #{title.inspect}" do
+            before { parser.send(:input).string = title }
+            it 'returns a TITLE token' do
+              expect(parser.send(:next_token)).to eq([:TITLE, title])
+            end
+
+            it 'the input matches the suffix pattern' do
+              expect(parser.title).to match(title)
+            end
+          end
+        end
+
+        %w{Hon. Hon Judge Sen. Sen Rep. Rep Representative Senator}.each do |title|
           describe "the next token is #{title.inspect}" do
             before { parser.send(:input).string = title }
             it 'returns a TITLE token' do
@@ -168,6 +181,18 @@ module Namae
             expect(parser.parse!('Yukihiro "Matz" Matsumoto Jr.')[0].values_at(:suffix, :nick)).to eq(%w{Jr. Matz})
           end
 
+          it 'parses nick given and family in "Doc" John Holiday' do
+            expect(parser.parse!("'Doc' John Holiday")[0].values_at(:nick, :given, :family).to eq(%w{Doc John Holiday}))
+          end
+
+          it 'parses nick given family and suffix in "Doc" John Holiday III'
+            expect(parser.parse!("'Doc' John Holiday III")[0].values_at(:nick, :given, :family, :suffix).to eq(['Doc','John','Holiday','III']))
+          end
+
+          it 'parses nick given family and suffix in "Doc" John H Holiday III'
+            expect(parser.parse!("'Doc' John H Holiday III")[0].values_at(:nick, :given, :family, :suffix).to eq(['Doc', 'John H' ,'Holiday', 'III']))
+          end
+
           it 'parses given and family name in "Poe, Edgar A."' do
             expect(parser.parse!('Poe, Edgar A.')[0].values_at(:given, :family)).to eq(['Edgar A.', 'Poe'])
           end
@@ -193,7 +218,6 @@ module Namae
           end
         end
       end
-
     end
   end
 end
