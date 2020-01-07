@@ -187,7 +187,7 @@ Namae was written as a part of a Google Summer of Code project. Thanks Google!
 
 Copyright
 ---------
-Copyright (c) 2013-2017 Sylvester Keil
+Copyright (c) 2013-2020 Sylvester Keil
 
 Copyright (c) 2012 President and Fellows of Harvard College.
 
