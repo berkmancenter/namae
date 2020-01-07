@@ -6,8 +6,12 @@ cache: bundler
 matrix:
   fast_finish: true
   include:
-  - rvm: 2.5
+  - rvm: 2.7
     env: WITH_COVERALLS=true
+  - rvm: 2.6
+    env: WITH_COVERALLS=false
+  - rvm: 2.5
+    env: WITH_COVERALLS=false
   - rvm: 2.4
     env: WITH_COVERALLS=false
   - rvm: 2.3
