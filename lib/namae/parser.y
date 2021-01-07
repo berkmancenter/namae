@@ -226,11 +226,11 @@ require 'strscan'
   end
 
   def will_see_suffix?
-    input.peek(8).to_s.strip.split(/\s+/)[0] =~ suffix
+    input.rest.strip.split(/\s+/)[0] =~ suffix
   end
 
   def will_see_initial?
-    input.peek(6).to_s.strip.split(/\s+/)[0] =~ /^[[:upper:]]+\b/
+    input.rest.strip.split(/\s+/)[0] =~ /^[[:upper:]]+\b/
   end
 
   def seen_full_name?

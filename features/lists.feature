@@ -126,3 +126,11 @@ Feature: Parse a list of names
       | given | family     |
       | M     | Di Proctor |
       | P     | Cooper     |
+
+  Scenario: A list of names with two consecutive accented characters
+    Given a parser that prefers commas as separators
+    When I parse the names "Çakıroğlu, Ü., Başıbüyük, B."
+    Then the names should be:
+      | given | family     |
+      | Ü.    | Çakıroğlu  |
+      | B.    | Başıbüyük  |
