@@ -20,7 +20,7 @@ rule
        | sort_order
 
   honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
-            | TITLE       { result = Name.new(:title => val[0]) }
+            | titles       { result = Name.new(:title => val[0]) }
 
   display_order : u_words word opt_suffices opt_titles
        {

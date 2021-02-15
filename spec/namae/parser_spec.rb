@@ -191,6 +191,10 @@ module Namae
             expect(parser.parse!('Bernado Franecki Ph.D.')[0].values_at(:given, :family, :title)).to eq(['Bernado', 'Franecki', 'Ph.D.'])
             #expect(parser.parse!('Bernado Franecki, Ph.D.')[0].values_at(:given, :family, :title)).to eq(['Bernado', 'Franecki', 'Ph.D.'])
           end
+
+          it 'parses consecutive titles in display order' do
+            expect(parser.parse!('Lt. Col. Bernado Franecki')[0].values_at(:given, :family, :title)).to eq(['Bernado', 'Franecki', 'Lt. Col.'])
+          end
         end
       end
 
