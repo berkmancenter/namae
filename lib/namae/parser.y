@@ -3,7 +3,7 @@
 
 class Namae::Parser
 
-token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE SUFFIX
+token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE SUFFIX UPWORD
 
 expect 0
 
@@ -20,7 +20,7 @@ rule
        | sort_order
 
   honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
-            | titles       { result = Name.new(:title => val[0]) }
+            | titles      { result = Name.new(:title => val[0]) }
 
   display_order : u_words word opt_suffices opt_titles
        {
@@ -43,6 +43,11 @@ rule
          result = Name.new(:given => val[0], :particle => val[1],
           :family => val[2])
        }
+       | u_words UPWORD last
+       {
+          result = Name.new(:given => val[0],
+          :family => val[1,2].join(' '))
+       }
        | von last
        {
          result = Name.new(:particle => val[0], :family => val[1])
@@ -52,6 +57,11 @@ rule
        {
          result = Name.new({ :family => val[0], :suffix => val[2][0],
            :given => val[2][1] }, !!val[2][0])
+       }
+       | UPWORD last COMMA first
+       {
+         result = Name.new({ :family => val[0,2].join(' '), :suffix => val[3][0],
+           :given => val[3][1] }, !!val[3][0])
        }
        | von last COMMA first
        {
@@ -112,7 +122,8 @@ require 'strscan'
     :separator => /\s*(\band\b|\&|;)\s*/i,
     :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|rabbi|cantor|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
     :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
-    :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i
+    :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i,
+    :uppercase_particle => /\s*\b((Da|De|Di|De\sLa|Du|Der|Des|Da|St|Saint|Les|Van)\.?)(\s+|$)/
   }
 
   class << self
@@ -155,6 +166,10 @@ require 'strscan'
 
   def appellation
     options[:appellation]
+  end
+
+  def uppercase_particle
+    options[:uppercase_particle]
   end
 
   def prefer_comma_as_separator?
@@ -262,6 +277,8 @@ require 'strscan'
       else
         consume_word(:UWORD, input.matched)
       end
+    when input.scan(uppercase_particle)
+      consume_word(:UPWORD, input.matched.strip)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{stops}]*/)
       consume_word(:UWORD, input.matched)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:lower:]][^\s#{stops}]*/)
