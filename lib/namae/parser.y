@@ -45,8 +45,11 @@ rule
        }
        | u_words UPWORD last
        {
-          result = Name.new(:given => val[0],
-          :family => val[1,2].join(' '))
+          result = if include_particle_in_family?
+                    Name.new(:given => val[0], :family => val[1,2].join(' '))
+                   else
+                     Name.new(:given => val[0], :particle => val[1], :family => val[2])
+                   end
        }
        | von last
        {
@@ -60,8 +63,11 @@ rule
        }
        | UPWORD last COMMA first
        {
-         result = Name.new({ :family => val[0,2].join(' '), :suffix => val[3][0],
-           :given => val[3][1] }, !!val[3][0])
+         result = if include_particle_in_family?
+                    Name.new({ :family => val[0,2].join(' '), :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
+                  else
+                    Name.new({ :particle => val[0], :family => val[1], :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
+                  end
        }
        | von last COMMA first
        {
@@ -117,6 +123,7 @@ require 'strscan'
   @defaults = {
     :debug => false,
     :prefer_comma_as_separator => false,
+    :include_particle_in_family => false,
     :comma => ',',
     :stops => ',;',
     :separator => /\s*(\band\b|\&|;)\s*/i,
@@ -150,6 +157,10 @@ require 'strscan'
 
   def comma
     options[:comma]
+  end
+
+  def include_particle_in_family?
+    options[:include_particle_in_family]
   end
 
   def stops

@@ -11,11 +11,12 @@ require 'strscan'
 module Namae
   class Parser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 116)
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 122)
 
   @defaults = {
     :debug => false,
     :prefer_comma_as_separator => false,
+    :include_particle_in_family => false,
     :comma => ',',
     :stops => ',;',
     :separator => /\s*(\band\b|\&|;)\s*/i,
@@ -28,8 +29,8 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 116)
   class << self
     attr_reader :defaults
 
-    def instance
-      Thread.current[:namae] ||= new
+    def instance(options = {})
+      Thread.current[:namae] ||= new(options)
     end
   end
 
@@ -49,6 +50,10 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 116)
 
   def comma
     options[:comma]
+  end
+
+  def include_particle_in_family?
+    options[:include_particle_in_family]
   end
 
   def stops
@@ -512,14 +517,17 @@ module_eval(<<'.,.,', 'parser.y', 42)
 
 module_eval(<<'.,.,', 'parser.y', 47)
   def _reduce_15(val, _values, result)
-              result = Name.new(:given => val[0],
-          :family => val[1,2].join(' '))
+              result = if include_particle_in_family?
+                    Name.new(:given => val[0], :family => val[1,2].join(' '))
+                   else
+                     Name.new(:given => val[0], :particle => val[1], :family => val[2])
+                   end
 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 52)
+module_eval(<<'.,.,', 'parser.y', 55)
   def _reduce_16(val, _values, result)
              result = Name.new(:particle => val[0], :family => val[1])
 
@@ -527,7 +535,7 @@ module_eval(<<'.,.,', 'parser.y', 52)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 57)
+module_eval(<<'.,.,', 'parser.y', 60)
   def _reduce_17(val, _values, result)
              result = Name.new({ :family => val[0], :suffix => val[2][0],
            :given => val[2][1] }, !!val[2][0])
@@ -536,16 +544,19 @@ module_eval(<<'.,.,', 'parser.y', 57)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 62)
+module_eval(<<'.,.,', 'parser.y', 65)
   def _reduce_18(val, _values, result)
-             result = Name.new({ :family => val[0,2].join(' '), :suffix => val[3][0],
-           :given => val[3][1] }, !!val[3][0])
+             result = if include_particle_in_family?
+                    Name.new({ :family => val[0,2].join(' '), :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
+                  else
+                    Name.new({ :particle => val[0], :family => val[1], :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
+                  end
 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 67)
+module_eval(<<'.,.,', 'parser.y', 73)
   def _reduce_19(val, _values, result)
              result = Name.new({ :particle => val[0], :family => val[1],
            :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
@@ -554,7 +565,7 @@ module_eval(<<'.,.,', 'parser.y', 67)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 72)
+module_eval(<<'.,.,', 'parser.y', 78)
   def _reduce_20(val, _values, result)
              result = Name.new({ :particle => val[0,2].join(' '), :family => val[2],
            :suffix => val[4][0], :given => val[4][1] }, !!val[4][0])
@@ -565,14 +576,14 @@ module_eval(<<'.,.,', 'parser.y', 72)
 
 # reduce 21 omitted
 
-module_eval(<<'.,.,', 'parser.y', 78)
+module_eval(<<'.,.,', 'parser.y', 84)
   def _reduce_22(val, _values, result)
      result = val.join(' ')
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 79)
+module_eval(<<'.,.,', 'parser.y', 85)
   def _reduce_23(val, _values, result)
      result = val.join(' ')
     result
@@ -583,28 +594,28 @@ module_eval(<<'.,.,', 'parser.y', 79)
 
 # reduce 25 omitted
 
-module_eval(<<'.,.,', 'parser.y', 83)
+module_eval(<<'.,.,', 'parser.y', 89)
   def _reduce_26(val, _values, result)
      result = [nil,val[0]]
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 84)
+module_eval(<<'.,.,', 'parser.y', 90)
   def _reduce_27(val, _values, result)
      result = [val[2],val[0]]
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 85)
+module_eval(<<'.,.,', 'parser.y', 91)
   def _reduce_28(val, _values, result)
      result = [val[0],nil]
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 86)
+module_eval(<<'.,.,', 'parser.y', 92)
   def _reduce_29(val, _values, result)
      result = [val[0],val[2]]
     result
@@ -613,7 +624,7 @@ module_eval(<<'.,.,', 'parser.y', 86)
 
 # reduce 30 omitted
 
-module_eval(<<'.,.,', 'parser.y', 89)
+module_eval(<<'.,.,', 'parser.y', 95)
   def _reduce_31(val, _values, result)
      result = val.join(' ')
     result
@@ -626,7 +637,7 @@ module_eval(<<'.,.,', 'parser.y', 89)
 
 # reduce 34 omitted
 
-module_eval(<<'.,.,', 'parser.y', 94)
+module_eval(<<'.,.,', 'parser.y', 100)
   def _reduce_35(val, _values, result)
      result = val.join(' ')
     result
@@ -653,7 +664,7 @@ module_eval(<<'.,.,', 'parser.y', 94)
 
 # reduce 45 omitted
 
-module_eval(<<'.,.,', 'parser.y', 104)
+module_eval(<<'.,.,', 'parser.y', 110)
   def _reduce_46(val, _values, result)
      result = val.join(' ')
     result
@@ -666,7 +677,7 @@ module_eval(<<'.,.,', 'parser.y', 104)
 
 # reduce 49 omitted
 
-module_eval(<<'.,.,', 'parser.y', 109)
+module_eval(<<'.,.,', 'parser.y', 115)
   def _reduce_50(val, _values, result)
      result = val.join(' ')
     result
