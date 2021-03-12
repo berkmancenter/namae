@@ -2,6 +2,11 @@ Given /^a parser that prefers commas as separators$/ do
   Namae::Parser.instance.options[:prefer_comma_as_separator] = true
 end
 
+Given /^I want to include particles in the family name$/ do
+  Namae::Parser.instance.options[:include_particle_in_family] = true
+end
+
+
 When /^I parse the name "(.*)"$/ do |string|
   @name = Namae.parse!(string)[0]
 end

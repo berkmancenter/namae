@@ -115,7 +115,8 @@ Feature: Parse a list of names
       | B     | Malcom  |
 
   Scenario: A list of names with particles separated by commas
-    Given a parser that prefers commas as separators
+    Given I want to include particles in the family name
+    And a parser that prefers commas as separators
     When I parse the names "Di Proctor, M., von Cooper, P."
     Then the names should be:
       | given | family     |
@@ -128,7 +129,8 @@ Feature: Parse a list of names
       | P     | Cooper     |
 
   Scenario: A list of names with two consecutive accented characters
-    Given a parser that prefers commas as separators
+    Given I want to include particles in the family name
+    And a parser that prefers commas as separators
     When I parse the names "Çakıroğlu, Ü., Başıbüyük, B."
     Then the names should be:
       | given | family     |
