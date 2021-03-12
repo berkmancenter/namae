@@ -3,7 +3,7 @@
 
 class Namae::Parser
 
-token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE SUFFIX UPWORD
+token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE SUFFIX UPARTICLE
 
 expect 0
 
@@ -43,7 +43,7 @@ rule
          result = Name.new(:given => val[0], :particle => val[1],
           :family => val[2])
        }
-       | u_words UPWORD last
+       | u_words UPARTICLE last
        {
           result = if include_particle_in_family?
                     Name.new(:given => val[0], :family => val[1,2].join(' '))
@@ -61,7 +61,7 @@ rule
          result = Name.new({ :family => val[0], :suffix => val[2][0],
            :given => val[2][1] }, !!val[2][0])
        }
-       | UPWORD last COMMA first
+       | UPARTICLE last COMMA first
        {
          result = if include_particle_in_family?
                     Name.new({ :family => val[0,2].join(' '), :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
@@ -289,7 +289,7 @@ require 'strscan'
         consume_word(:UWORD, input.matched)
       end
     when input.scan(uppercase_particle)
-      consume_word(:UPWORD, input.matched.strip)
+      consume_word(:UPARTICLE, input.matched.strip)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{stops}]*/)
       consume_word(:UWORD, input.matched)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:lower:]][^\s#{stops}]*/)

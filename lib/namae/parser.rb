@@ -29,8 +29,8 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 122)
   class << self
     attr_reader :defaults
 
-    def instance(options = {})
-      Thread.current[:namae] ||= new(options)
+    def instance
+      Thread.current[:namae] ||= new
     end
   end
 
@@ -182,7 +182,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 122)
         consume_word(:UWORD, input.matched)
       end
     when input.scan(uppercase_particle)
-      consume_word(:UPWORD, input.matched.strip)
+      consume_word(:UPARTICLE, input.matched.strip)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{stops}]*/)
       consume_word(:UWORD, input.matched)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:lower:]][^\s#{stops}]*/)
@@ -357,7 +357,7 @@ racc_token_table = {
   :APPELLATION => 8,
   :TITLE => 9,
   :SUFFIX => 10,
-  :UPWORD => 11 }
+  :UPARTICLE => 11 }
 
 racc_nt_base = 12
 
@@ -391,7 +391,7 @@ Racc_token_to_s_table = [
   "APPELLATION",
   "TITLE",
   "SUFFIX",
-  "UPWORD",
+  "UPARTICLE",
   "$start",
   "names",
   "name",
