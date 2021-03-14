@@ -47,4 +47,6 @@ Feature: Parse the names in the Readme file
       | Walther von der Vogelheide        | Walther      | von der  | Vogelheide   |        |           |             |      |
       | Don De Lillo                      | Don          | De       | Lillo        |        |           |             |      |
       | De Lillo, Don                     | Don          | De       | Lillo        |        |           |             |      |
+      | Tom Van de Weghe                  | Tom          | Van de   | Weghe        |        |           |             |      |
+      | Tom Van De Weghe                  | Tom          | Van De   | Weghe        |        |           |             |      |
 
