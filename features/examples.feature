@@ -34,3 +34,17 @@ Feature: Parse the names in the Readme file
       | Mr. Yukihiro "Matz" Matsumoto     | Yukihiro     |          | Matsumoto    |        |           | Mr.         | Matz |
       | Yukihiro "Matz" Matsumoto Sr.     | Yukihiro     |          | Matsumoto    | Sr.    |           |             | Matz |
       | Mr. Yukihiro "Matz" Matsumoto Sr. | Yukihiro     |          | Matsumoto    | Sr.    |           | Mr.         | Matz |
+
+    @particle
+    Scenarios: Particles
+      | name                              | given        | particle | family       | suffix | title     | appellation | nick |
+      | Ludwig von Beethoven              | Ludwig       | von      | Beethoven    |        |           |             |      |
+      | Beethoven, Ludwig von             | Ludwig von   |          | Beethoven    |        |           |             |      |
+      | Vincent Van Gogh                  | Vincent      | Van      | Gogh         |        |           |             |      |
+      | Vincent van Gogh                  | Vincent      | van      | Gogh         |        |           |             |      |
+      | Van Gogh, Vincent                 | Vincent      | Van      | Gogh         |        |           |             |      |
+      | van Gogh, Vincent                 | Vincent      | van      | Gogh         |        |           |             |      |
+      | Walther von der Vogelheide        | Walther      | von der  | Vogelheide   |        |           |             |      |
+      | Don De Lillo                      | Don          | De       | Lillo        |        |           |             |      |
+      | De Lillo, Don                     | Don          | De       | Lillo        |        |           |             |      |
+

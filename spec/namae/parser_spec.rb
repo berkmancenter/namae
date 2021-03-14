@@ -207,6 +207,10 @@ module Namae
               expect(parser.parse!('Matt St. Hilaire')[0].values_at(:given, :family, :particle)).to eq(['Matt', 'Hilaire', 'St.'])
             end
 
+            it 'parses multiple common capitalized particles as the family name in display order' do
+              expect(parser.parse!('Tom Van De Weghe')[0].values_at(:given, :family, :particle)).to eq(['Tom', 'Weghe', 'Van De'])
+            end
+
             it 'parses common lowercase particles as a particle, not family name in display order' do
               expect(parser.parse!('Carlos de Silva')[0].values_at(:given, :family, :particle)).to eq(['Carlos', 'Silva', 'de'])
             end
@@ -235,16 +239,16 @@ module Namae
               expect(parser.parse!('Matt St. Hilaire')[0].values_at(:given, :family, :particle)).to eq(['Matt', 'St. Hilaire', nil])
             end
 
-            it 'parses common lowercase particles as a particle, not family name in display order' do
-              expect(parser.parse!('Carlos de Silva')[0].values_at(:given, :family, :particle)).to eq(['Carlos', 'Silva', 'de'])
+            it 'parses common lowercase particles as family name in display order' do
+              expect(parser.parse!('Carlos de Silva')[0].values_at(:given, :family, :particle)).to eq(['Carlos', 'de Silva', nil])
             end
 
             it 'parses common capitalized particles as the family name in sort order' do
               expect(parser.parse!('De Silva, Carlos')[0].values_at(:given, :family, :particle)).to eq(['Carlos', 'De Silva', nil])
             end
 
-            it 'parses common lowercase particles as a particle, not family name in sort order' do
-              expect(parser.parse!('de Silva, Carlos')[0].values_at(:given, :family, :particle)).to eq(['Carlos', 'Silva', 'de'])
+            it 'parses common lowercase particles as family name in sort order' do
+              expect(parser.parse!('de Silva, Carlos')[0].values_at(:given, :family, :particle)).to eq(['Carlos', 'de Silva', nil])
             end
 
             it 'parses common capitalized particles with punctuation as the family name in display order' do

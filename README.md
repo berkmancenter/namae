@@ -121,6 +121,16 @@ ambiguous. For example, multiple family names are always possible in sort-order:
 Whilst in display-order, multiple family names are only supported when the
 name contains a particle or a nickname.
 
+Namae tries to detect common particles using the `:uppercase_particle` lexer
+pattern. If you prefer to always include particles with the family name, you
+can set the the `:include_particle_in_family` parser option.
+
+    Namae.parse 'Ludwig von Beethoven'
+    #-> [#<Name family="Beethoven" given="Ludwig" particle="von">]
+
+    Namae.options[:include_particle_in_family] = true
+    #-> [#<Name family="von Beethoven" given="Ludwig">]
+
 Configuration
 -------------
 You can tweak some of Namae's parse rules by configuring the parser's

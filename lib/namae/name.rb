@@ -183,6 +183,13 @@ module Namae
       self
     end
 
+    def merge_particles!
+      self.family = [dropping_particle, particle, family].compact.join(' ')
+      self.dropping_particle = nil
+      self.particle = nil
+      self
+    end
+
     # @return [String] a string representation of the name
     def inspect
       "#<Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if v }.compact.join(' ')}>"

@@ -121,12 +121,12 @@ Feature: Parse a list of names
     Then the names should be:
       | given | family     |
       | M.    | Di Proctor |
-      | P.    | Cooper     |
+      | P.    | von Cooper |
     When I parse the names "Di Proctor, M, von Cooper, P"
     Then the names should be:
       | given | family     |
       | M     | Di Proctor |
-      | P     | Cooper     |
+      | P     | von Cooper |
 
   Scenario: A list of names with two consecutive accented characters
     Given I want to include particles in the family name

@@ -24,32 +24,24 @@ rule
 
   display_order : u_words word opt_suffices opt_titles
        {
-         result = Name.new(:given => val[0], :family => val[1],
-           :suffix => val[2], :title => val[3])
+         result = Name.new(
+           :given => val[0], :family => val[1], :suffix => val[2], :title => val[3]
+         )
        }
        | u_words NICK last opt_suffices opt_titles
        {
-         result = Name.new(:given => val[0], :nick => val[1],
-           :family => val[2], :suffix => val[3], :title => val[4])
+         result = Name.new(
+           :given => val[0], :nick => val[1], :family => val[2], :suffix => val[3], :title => val[4]
+         )
        }
        | u_words NICK von last opt_suffices opt_titles
        {
-         result = Name.new(:given => val[0], :nick => val[1],
-           :particle => val[2], :family => val[3],
-           :suffix => val[4], :title => val[5])
+         result = Name.new(
+           :given => val[0], :nick => val[1], :particle => val[2], :family => val[3], :suffix => val[4], :title => val[5])
        }
        | u_words von last
        {
-         result = Name.new(:given => val[0], :particle => val[1],
-          :family => val[2])
-       }
-       | u_words UPARTICLE last
-       {
-          result = if include_particle_in_family?
-                    Name.new(:given => val[0], :family => val[1,2].join(' '))
-                   else
-                     Name.new(:given => val[0], :particle => val[1], :family => val[2])
-                   end
+         result = Name.new(:given => val[0], :particle => val[1], :family => val[2])
        }
        | von last
        {
@@ -58,32 +50,29 @@ rule
 
   sort_order : last COMMA first
        {
-         result = Name.new({ :family => val[0], :suffix => val[2][0],
-           :given => val[2][1] }, !!val[2][0])
-       }
-       | UPARTICLE last COMMA first
-       {
-         result = if include_particle_in_family?
-                    Name.new({ :family => val[0,2].join(' '), :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
-                  else
-                    Name.new({ :particle => val[0], :family => val[1], :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
-                  end
+         result = Name.new({
+           :family => val[0], :suffix => val[2][0], :given => val[2][1]
+         }, !!val[2][0])
        }
        | von last COMMA first
        {
-         result = Name.new({ :particle => val[0], :family => val[1],
-           :suffix => val[3][0], :given => val[3][1] }, !!val[3][0])
+         result = Name.new({
+           :particle => val[0], :family => val[1], :suffix => val[3][0], :given => val[3][1]
+         }, !!val[3][0])
        }
        | u_words von last COMMA first
        {
-         result = Name.new({ :particle => val[0,2].join(' '), :family => val[2],
-           :suffix => val[4][0], :given => val[4][1] }, !!val[4][0])
+         result = Name.new({
+           :particle => val[0,2].join(' '), :family => val[2], :suffix => val[4][0], :given => val[4][1]
+         }, !!val[4][0])
        }
        ;
 
-  von : LWORD
-      | von LWORD         { result = val.join(' ') }
-      | von u_words LWORD { result = val.join(' ') }
+  von : particle
+      | von particle         { result = val.join(' ') }
+      | von u_words particle { result = val.join(' ') }
+
+  particle : LWORD | UPARTICLE
 
   last : LWORD | u_words
 
@@ -103,7 +92,7 @@ rule
   opt_comma : /* empty */ | COMMA
   opt_words : /* empty */ | words
 
-  word : LWORD | UWORD | PWORD
+  word : LWORD | UWORD | PWORD | UPARTICLE
 
   opt_suffices : /* empty */ | suffices
 
@@ -130,7 +119,7 @@ require 'strscan'
     :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|rabbi|cantor|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
     :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
     :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i,
-    :uppercase_particle => /\s*\b((Da|De|Di|De\sLa|Du|Der|Des|Da|St|Saint|Les|Van)\.?)(\s+|$)/
+    :uppercase_particle => /\s*\b(D[aiu]|De[rs]?|St\.?|Saint|La|Les|V[ao]n)(\s+|$)/
   }
 
   class << self
@@ -197,7 +186,9 @@ require 'strscan'
   def parse!(string)
     @input = StringScanner.new(normalize(string))
     reset
-    do_parse
+    names = do_parse
+    names.map(&:merge_particles!) if include_particle_in_family?
+    names
   end
 
   def normalize(string)
