@@ -53,7 +53,7 @@ Gem::Specification.new do |s|
     "spec/thread_safety_spec.rb"
   ]
   s.homepage = "https://github.com/berkmancenter/namae".freeze
-  s.licenses = ["AGPL-3.0".freeze]
+  s.licenses = ["AGPL-3.0".freeze, "BSD-2-Clause".freeze]
   s.rubygems_version = "3.2.3".freeze
   s.summary = "Namae (\u540D\u524D) parses personal names and splits them into their component parts.".freeze
 
