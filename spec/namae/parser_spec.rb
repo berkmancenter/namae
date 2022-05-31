@@ -196,6 +196,10 @@ module Namae
             expect(parser.parse!('Lt. Col. Bernado Franecki')[0].values_at(:given, :family, :title)).to eq(['Bernado', 'Franecki', 'Lt. Col.'])
           end
 
+          it 'parses gender pronouns' do
+            expect(parser.parse!('Max Power (he/him)')[0].values_at(:given, :family, :pronoun)).to eq(['Max', 'Power', '(he/him)'])
+          end
+
           context 'when include_particle_in_family is false' do
             let(:parser) { Parser.new(include_particle_in_family: false) }
 

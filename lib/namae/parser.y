@@ -3,7 +3,7 @@
 
 class Namae::Parser
 
-token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE SUFFIX UPARTICLE
+token COMMA UWORD LWORD PWORD NICK AND APPELLATION TITLE SUFFIX UPARTICLE PRONOUN
 
 expect 0
 
@@ -22,22 +22,23 @@ rule
   honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
             | titles      { result = Name.new(:title => val[0]) }
 
-  display_order : u_words word opt_suffices opt_titles
+  display_order : u_words word opt_suffices opt_titles opt_pronouns
        {
          result = Name.new(
-           :given => val[0], :family => val[1], :suffix => val[2], :title => val[3]
+           :given => val[0], :family => val[1], :suffix => val[2], :title => val[3],:pronoun => val[4]
          )
        }
-       | u_words NICK last opt_suffices opt_titles
+       | u_words NICK last opt_suffices opt_titles opt_pronouns
        {
          result = Name.new(
-           :given => val[0], :nick => val[1], :family => val[2], :suffix => val[3], :title => val[4]
+           :given => val[0], :nick => val[1], :family => val[2], :suffix => val[3], :title => val[4],:pronoun => val[5]
          )
        }
-       | u_words NICK von last opt_suffices opt_titles
+       | u_words NICK von last opt_suffices opt_titles opt_pronouns
        {
          result = Name.new(
-           :given => val[0], :nick => val[1], :particle => val[2], :family => val[3], :suffix => val[4], :title => val[5])
+           :given => val[0], :nick => val[1], :particle => val[2], :family => val[3], :suffix => val[4], :title => val[5],:pronoun => val[6]
+           )
        }
        | u_words von last
        {
@@ -98,6 +99,11 @@ rule
 
   suffices : SUFFIX
            | suffices SUFFIX { result = val.join(' ') }
+  
+  opt_pronouns : /* empty */ | pronouns
+  
+  pronouns : PRONOUN
+           | pronouns PRONOUN { result = val.join(' ') }
 
   opt_titles : /* empty */ | titles
 
@@ -119,7 +125,8 @@ require 'strscan'
     :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|rabbi|cantor|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
     :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
     :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i,
-    :uppercase_particle => /\s*\b(D[aiu]|De[rs]?|St\.?|Saint|La|Les|V[ao]n)(\s+|$)/
+    :uppercase_particle => /\s*\b(D[aiu]|De[rs]?|St\.?|Saint|La|Les|V[ao]n)(\s+|$)/,
+    :pronoun => /\((.*)\)/
   }
 
   class << self
@@ -164,6 +171,10 @@ require 'strscan'
     options[:suffix]
   end
 
+  def pronoun
+    options[:pronoun]
+  end
+
   def appellation
     options[:appellation]
   end
@@ -196,7 +207,7 @@ require 'strscan'
   end
 
   def reset
-    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?
+    @commas, @words, @initials, @suffices, @pronouns, @yydebug = 0, 0, 0, 0, 0, debug?
     self
   end
 
@@ -229,6 +240,8 @@ require 'strscan'
       @initials += 1 if word =~ /^[[:upper:]]+\b/
     when :SUFFIX
       @suffices += 1
+    when :PRONOUN
+      @pronouns += 1
     end
 
     [type, word]
@@ -246,13 +259,21 @@ require 'strscan'
     input.rest.strip.split(/\s+/)[0] =~ suffix
   end
 
+  def pronoun?
+    !@suffices.zero? || will_see_pronoun?
+  end
+
+  def will_see_pronoun?
+    input.rest.strip.split(/\s+/)[0] =~ pronoun
+  end
+
   def will_see_initial?
     input.rest.strip.split(/\s+/)[0] =~ /^[[:upper:]]+\b/
   end
 
   def seen_full_name?
     prefer_comma_as_separator? && @words > 1 &&
-      (@initials > 0 || !will_see_initial?) && !will_see_suffix?
+      (@initials > 0 || !will_see_initial?) && !will_see_suffix? && !will_see_pronoun?
   end
 
   def next_token
@@ -273,6 +294,8 @@ require 'strscan'
       consume_word(:TITLE, input.matched.strip)
     when input.scan(suffix)
       consume_word(:SUFFIX, input.matched.strip)
+    when input.scan(pronoun)
+      consume_word(:PRONOUN, input.matched.strip)
     when input.scan(appellation)
       if @words.zero?
         [:APPELLATION, input.matched.strip]
