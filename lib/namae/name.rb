@@ -83,7 +83,7 @@ module Namae
   #     name.given #=> Yukihiro
   #
   class Name < Struct.new :family, :given, :suffix, :particle,
-    :dropping_particle, :nick, :appellation, :title
+    :dropping_particle, :nick, :appellation, :title, :pronoun
 
     include NameFormatting
 
