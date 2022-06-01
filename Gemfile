@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
 group :test do
-  gem 'rspec', '~> 3.7'
+  gem 'rspec'
   gem 'rake'
-  gem 'cucumber', '~> 3.1'
+  gem 'cucumber'
 end
 
 group :development do

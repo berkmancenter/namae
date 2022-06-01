@@ -1,1 +1,1 @@
-default: --format progress --require features --color
+default: --format progress --require features --color --publish-quiet
