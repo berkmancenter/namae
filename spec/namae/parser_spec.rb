@@ -76,7 +76,7 @@ module Namae
           end
         end
 
-        %w{Jr. Jr Sr. Sr II II. VII IX}.each do |suffix|
+        %w{Jr. Jr Sr. Sr II II. VII IX Iii Vii}.each do |suffix|
           describe "the next token is #{suffix.inspect}" do
             before { parser.send(:input).string = suffix }
             it 'returns an SUFFIX token' do
