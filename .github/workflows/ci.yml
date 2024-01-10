@@ -35,3 +35,9 @@ jobs:
           bundler-cache: true
       - name: Run tests
         run: bundle exec rake
+      - name: Upload coverage results
+        if: matrix.ruby-version == '3.3'
+        continue-on-error: true
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ github.token }}
