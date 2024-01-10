@@ -35,11 +35,10 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = %w{README.md AGPL}
 
   s.files =
-    `git ls-files`.split('\n') -
-      `git ls-files features spec`.split('\n') - %w{
+    `git ls-files`.split("\n") -
+      `git ls-files features spec .github`.split("\n") - %w{
         .codeclimate.yml
         .coveralls.yml
-        .github
         .gitignore
         .rspec
         .rubocop.yml
