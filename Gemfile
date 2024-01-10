@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+gemspec
 
 group :test do
   gem 'rspec'
@@ -6,21 +7,11 @@ group :test do
   gem 'cucumber'
 end
 
-group :development do
-  gem 'racc', '~> 1.4', :platform => :ruby
-end
-
 group :coverage do
   gem 'simplecov', :require => false, :platforms => :ruby
   gem 'coveralls', :require => false if ENV['CI']
 end
 
-group :optional do
-  gem 'jeweler'
-  gem 'yard'
-end
-
 group :debug do
-  gem 'debugger', :platform => [:mri_19]
-  gem 'byebug', :platform => :mri if RUBY_VERSION > '2.0'
+  gem 'debug', :platform => [:mri]
 end

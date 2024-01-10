@@ -10,36 +10,6 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
-$:.unshift(File.join(File.dirname(__FILE__), './lib'))
-require 'namae'
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = 'namae'
-    gem.version = Namae::Version::STRING.dup
-    gem.homepage = 'https://github.com/berkmancenter/namae'
-
-    gem.email = ['sylvester@keil.or.at', 'dan@collispuro.com']
-    gem.authors = ['Sylvester Keil', 'Dan Collis-Puro']
-
-    gem.license = 'AGPL-3.0'
-
-    gem.summary =
-      'Namae (名前) parses personal names and splits them into their component parts.'
-
-    gem.description = %q{
-      Namae (名前) is a parser for human names. It recognizes personal names of
-      various cultural backgrounds and tries to split them into their component
-      parts (e.g., given and family names, honorifics etc.).
-    }.gsub(/\s+/, ' ')
-
-  end
-  Jeweler::RubygemsDotOrgTasks.new
-rescue LoadError
-  warn 'failed to load jeweler'
-end
-
 desc 'Generate the name parser'
 task :racc => ['lib/namae/parser.rb']
 
@@ -62,13 +32,6 @@ begin
   require 'coveralls/rake/task'
   Coveralls::RakeTask.new
   task :test_with_coveralls => [:spec, :features, 'coveralls:push']
-rescue LoadError
-  # ignore
-end
-
-begin
-  require 'yard'
-  YARD::Rake::YardocTask.new
 rescue LoadError
   # ignore
 end
