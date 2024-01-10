@@ -8,8 +8,8 @@ group :test do
 end
 
 group :coverage do
-  gem 'simplecov', :require => false, :platforms => :ruby
-  gem 'coveralls', :require => false if ENV['CI']
+  gem 'simplecov', require: false
+  gem 'simplecov-lcov', require: false
 end
 
 group :debug do
