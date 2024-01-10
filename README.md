@@ -4,8 +4,8 @@ Namae is a parser for human names. It recognizes personal names of various
 cultural backgrounds and tries to split them into their component parts
 (e.g., given and family names, honorifics etc.).
 
-[![Build Status](https://travis-ci.org/berkmancenter/namae.svg?branch=master)](https://travis-ci.org/berkmancenter/namae)
-[![Coverage Status](https://coveralls.io/repos/github/berkmancenter/namae/badge.svg?branch=master)](https://coveralls.io/github/berkmancenter/namae?branch=master)
+[![CI](https://github.com/berkmancenter/namae/actions/workflows/ci.yml/badge.svg)](https://github.com/berkmancenter/namae/actions/workflows/ci.yml)
+[![Coverage](https://coveralls.io/repos/github/berkmancenter/namae/badge.svg?branch=master)](https://coveralls.io/github/berkmancenter/namae?branch=master)
 [![Gem Version](https://badge.fury.io/rb/namae.svg)](http://badge.fury.io/rb/namae)
 [![Code Climate](https://codeclimate.com/github/berkmancenter/namae/badges/gpa.svg)](https://codeclimate.com/github/berkmancenter/namae)
 
