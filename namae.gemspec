@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/berkmancenter/namae'
   s.email = ['sylvester@keil.or.at']
   s.authors = ['Sylvester Keil']
-  s.licenses = ['AGPL-3.0', 'BSD-2-Clause']
+  s.licenses = ['AGPL-3.0-or-later', 'BSD-2-Clause']
 
   s.summary =
     'Namae (名前) parses personal names and splits them into their component parts.'
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
     --main README.md
     --exclude lib/namae/parser.rb
   }
-  s.extra_rdoc_files = %w{README.md AGPL}
+  s.extra_rdoc_files = %w{README.md BDSL AGPL}
 
   s.files = `git ls-files -- lib`.split("\n") + %w[AGPL BSDL README.md]
 end

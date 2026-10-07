@@ -75,7 +75,7 @@ referred to as display-order and sort-order. For example, the following
 names are written in display-order:
 
     Namae.parse 'Charles Babbage'
-    #-> [#<Name family="Babbage" given="Charles">]]
+    #-> [#<Name family="Babbage" given="Charles">]
 
     Namae.parse 'Mr. Alan M. Turing'
     #-> [#<Name family="Turing" given="Alan M." appellation="Mr.">]
@@ -122,7 +122,7 @@ name contains a particle or a nickname.
 
 Namae tries to detect common particles using the `:uppercase_particle` lexer
 pattern. If you prefer to always include particles with the family name, you
-can set the the `:include_particle_in_family` parser option.
+can set the `:include_particle_in_family` parser option.
 
     Namae.parse 'Ludwig von Beethoven'
     #-> [#<Name family="Beethoven" given="Ludwig" particle="von">]
@@ -198,7 +198,7 @@ Namae was written as a part of a Google Summer of Code project. Thanks Google!
 
 Copyright
 ---------
-Copyright (c) 2013-2020 Sylvester Keil
+Copyright (c) 2013-2026 Sylvester Keil
 
 Copyright (c) 2012 President and Fellows of Harvard College.
 
