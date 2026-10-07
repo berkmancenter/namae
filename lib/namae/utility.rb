@@ -39,13 +39,20 @@ module Namae
     Parser.instance.parse!(names)
   end
 
-  # @return [Hash] the parser's current configuration.
+  # @return [Hash] the parser's current configuration (read-only).
   def options
     Parser.instance.options
   end
 
-  # @yield [Hash] the parser's default configuration.
-  def configure
-    yield Parser.defaults
+  # Changes the default configuration of all parsers.
+  #
+  # @example
+  #   Namae.configure do |options|
+  #     options[:prefer_comma_as_separator] = true
+  #   end
+  #
+  # @yield [Hash] a writable copy of the default configuration.
+  def configure(&block)
+    Parser.configure(&block)
   end
 end

@@ -13,6 +13,7 @@ module Namae
 				end
 
         describe 'when the input is empty' do
+          before { parser.send(:input).string = '' }
           it 'returns nil' do
             expect(parser.send(:next_token)).to be_nil
           end
@@ -305,6 +306,22 @@ module Namae
         parser = Parser.new(title: /\s*\b(Sen\.)(\s+|$)/)
         expect(parser.parse!('Sen. John Smith')[0].values_at(:given, :family, :title))
           .to eq(['John', 'Smith', 'Sen.'])
+      end
+    end
+
+    describe 'separator option' do
+      it 'matches words as whole words only' do
+        parser = Parser.new(separator: %w[és])
+        expect(parser.parse!('Kovács János és Nagy Péter').length).to eq(2)
+        expect(parser.parse!('Kovácsés Péter').length).to eq(1)
+      end
+
+      it 'matches symbols without word boundaries' do
+        expect(Parser.new(separator: %w[+]).parse!('Plato +Sokrates').length).to eq(2)
+      end
+
+      it 'accepts a custom pattern' do
+        expect(Parser.new(separator: /\s*\bund\b\s*/).parse!('Plato und Sokrates').length).to eq(2)
       end
     end
   end

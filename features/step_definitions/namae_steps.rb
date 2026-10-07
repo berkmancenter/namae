@@ -7,22 +7,25 @@ def parts(name, columns)
   columns.to_h { |column| [column, name[PARTS[column]].to_s] }
 end
 
+def options
+  @options ||= {}
+end
+
 Given(/^a parser that prefers commas as separators$/) do
-  Namae::Parser.instance.options[:prefer_comma_as_separator] = true
+  options[:prefer_comma_as_separator] = true
 end
 
 Given(/^I want to include particles in the family name$/) do
-  Namae::Parser.instance.options[:include_particle_in_family] = true
+  options[:include_particle_in_family] = true
 end
 
-Given(/^I add "(.*)" to the (titles|trailing titles)$/) do |word, list|
-  options = Namae::Parser.instance.options
-  key = list == 'titles' ? :title : :trailing_title
-  options[key] = options[key] + [word]
+Given(/^I add "(.*)" to the (titles|trailing titles|separators)$/) do |word, list|
+  key = { 'titles' => :title, 'trailing titles' => :trailing_title, 'separators' => :separator }[list]
+  options[key] = options.fetch(key, Namae::Parser.defaults[key]) + [word]
 end
 
 When(/^I parse the names? "(.*)"$/) do |string|
-  @names = Namae.parse!(string)
+  @names = Namae::Parser.new(options).parse!(string)
 end
 
 Then(/^the parts should be:$/) do |table|

@@ -6,7 +6,3 @@ rescue LoadError
 end
 
 require 'namae'
-
-Before do
-  Thread.current[:namae] = nil
-end

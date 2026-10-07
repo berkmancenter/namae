@@ -171,3 +171,23 @@ Feature: Parse a list of names
       | John Smith et al.      |
       | Smith, John, et al.    |
       | Smith, John and others |
+
+  Scenario: A list of sort-order names with particles and multi-word given names
+    Given a parser that prefers commas as separators
+    When I parse the names "Da Silva, Luiz Inácio, Van der Berg, Anna Maria"
+    Then the names should be:
+      | given       | particle | family |
+      | Luiz Inácio | Da       | Silva  |
+      | Anna Maria  | Van der  | Berg   |
+
+  Scenario: A list of names with a custom separator
+    Given I add "und" to the separators
+    When I parse the names "Max Weber und Karl Marx"
+    Then the names should be:
+      | given | family |
+      | Max   | Weber  |
+      | Karl  | Marx   |
+    When I parse the names "Anna Grundmann"
+    Then the names should be:
+      | given | family    |
+      | Anna  | Grundmann |

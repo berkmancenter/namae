@@ -26,6 +26,15 @@ module Namae
       it 'returns a single name object if there is more than one name' do
         expect(Name.parse('Plato and Sokrates').given).to eq('Plato')
       end
+
+      it 'reads commas as sort order even if commas are preferred as separators' do
+        Namae.configure { |o| o[:prefer_comma_as_separator] = true }
+        expect(Name.parse('García Márquez, Gabriel José').values_at(:family, :given))
+          .to eq(['García Márquez', 'Gabriel José'])
+        expect(Namae.parse('García Márquez, Gabriel José').length).to eq(2)
+      ensure
+        Namae.configure { |o| o[:prefer_comma_as_separator] = false }
+      end
     end
 
     describe '#values_at' do

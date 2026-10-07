@@ -125,7 +125,7 @@ require 'strscan'
     :include_particle_in_family => false,
     :comma => ',',
     :stops => ',;',
-    :separator => /\s*(\band\b|\&|;)\s*/i,
+    :separator => %w[and & ;].freeze,
     :et_al => /\s*\b(et\s+al\b\.?|and\s+others\b)\s*\z/i,
     :title => %w[
       Sir Dame Lord Lady Count Countess Baroness Hon.
@@ -133,10 +133,10 @@ require 'strscan'
       Commander Cmdr Lieutenant Lt Sergeant Sgt Cpl Pvt
       Reverend Rev Pr Father Sister Brother Deaconess Rabbi Vicar
       Archbishop Msgr Professor Prof Doctor Dr
-    ],
+    ].freeze,
     :trailing_title => %w[
       PhD Ph.D DPhil EdD Ed.D PsyD MD M.D DDS DVM JD J.D RN Esq
-    ],
+    ].freeze,
     :suffix => /\s*\b(JR|Jr|jr|JNR|Jnr|jnr|SR|Sr|sr|SNR|Snr|snr|[IVX]{2,}|[1-9]\d*(st|nd|rd|th))(\.|\b)/,
     :appellation => /\s*\b((mrs?|mx|ms|fr|hr|mme|mlle)\.?|miss|herr|frau)(\s+|$)/i,
     :uppercase_particle => /\s*\b(D[aiu]|De[rs]?|St\.?|Saint|La|Les|V[ao]n)(\s+|$)/
@@ -145,24 +145,47 @@ require 'strscan'
   class << self
     attr_reader :defaults
 
+    # Yields a writable copy of the default options. The new defaults
+    # apply to all parsers created afterwards, including each thread's
+    # parser instance. List values are frozen: assign a new list instead
+    # of changing it in place (e.g., `options[:title] += %w[Sen]`).
+    def configure
+      options = defaults.dup
+      yield options
+      @defaults = freeze_options(options)
+    end
+
+    # @return [Parser] the current thread's parser, which is replaced
+    #   when the defaults change.
     def instance
-      Thread.current[:namae] ||= new
+      parser = Thread.current[:namae]
+      parser = Thread.current[:namae] = new unless parser&.defaults.equal?(defaults)
+      parser
+    end
+
+    def freeze_options(options)
+      options.transform_values { |value| value.frozen? ? value : value.dup.freeze }.freeze
     end
   end
 
-  attr_reader :options, :input
+  @defaults = freeze_options(@defaults)
 
+  attr_reader :options, :defaults, :input,
+    :separator, :title, :trailing_title, :trailing_titles, :single_word
+
+  # @param options [Hash] options that override the current defaults;
+  #   the parser's options cannot be changed later.
   def initialize(options = {})
-    @options = self.class.defaults.merge(options)
+    @defaults = self.class.defaults
+    @options = self.class.freeze_options(defaults.merge(options))
+    @input = StringScanner.new('')
+    compile_patterns
   end
 
   def debug?
     options[:debug] || ENV['DEBUG']
   end
 
-  def separator
-    options[:separator]
-  end
 
   def comma
     options[:comma]
@@ -180,20 +203,6 @@ require 'strscan'
     options[:et_al]
   end
 
-  # Titles precede the name.
-  def title
-    memo(:title, options[:title]) do
-      compile(options[:title], /(?=\s|\z)\s*/)
-    end
-  end
-
-  # Trailing titles follow the name, optionally after a comma.
-  def trailing_title
-    memo(:trailing_title, options[:trailing_title], stops) do
-      compile(options[:trailing_title], /(?![^\s#{stops}])\s*/)
-    end
-  end
-
   def suffix
     options[:suffix]
   end
@@ -207,7 +216,7 @@ require 'strscan'
   end
 
   def prefer_comma_as_separator?
-    options[:prefer_comma_as_separator]
+    options[:prefer_comma_as_separator] && !@single
   end
 
   def parse(string)
@@ -217,8 +226,11 @@ require 'strscan'
     Names.new
   end
 
-  def parse!(string)
+  # @param single [Boolean] whether the input is a single name, in which
+  #   case commas never separate names.
+  def parse!(string, single: false)
     @input = StringScanner.new(normalize(string))
+    @single = single
     reset
     names = Names.new(do_parse)
     names.map(&:merge_particles!) if include_particle_in_family?
@@ -234,18 +246,43 @@ require 'strscan'
     name
   end
 
-  def compile(words, boundary)
-    return words if words.is_a?(Regexp)
+  # Compiles the patterns derived from the options.
+  def compile_patterns
+    # Separator words (e.g., 'and') match as whole words only, symbols
+    # (e.g., '&') need no word boundaries.
+    @separator = pattern(:separator) do |words|
+      words = words.map do |word|
+        word.match?(/\A[[:alnum:]]+\z/) ? "\\b#{Regexp.escape(word)}\\b" : Regexp.escape(word)
+      end
+      /\s*(#{words.join('|')})\s*/i
+    end
 
-    # A trailing period is optional unless the word itself ends with one.
-    words = words.map { |word| word.end_with?('.') ? Regexp.escape(word) : "#{Regexp.escape(word)}\\.?" }
-    /\s*\b(#{words.join('|')})#{boundary}/i
+    # Titles precede the name; trailing titles follow it, optionally
+    # after a comma.
+    @title = pattern(:title) do |words|
+      /\s*\b(#{titles(words)})(?=\s|\z)\s*/i
+    end
+    @trailing_title = pattern(:trailing_title) do |words|
+      /\s*\b(#{titles(words)})(?![^\s#{stops}])\s*/i
+    end
+
+    end_of_name = /(#{separator}|\s*#{comma}|\s*\z)/
+    @trailing_titles = /(#{trailing_title})+#{end_of_name}/
+    @single_word = /[^\s#{stops}]+#{end_of_name}/
   end
 
-  # Caches patterns derived from options; the key includes the option
-  # values so that changing an option invalidates the cached pattern.
-  def memo(*key)
-    (@memo ||= {})[key] ||= yield
+  # @return [Regexp] the option itself if it is a pattern; otherwise the
+  #   pattern the block builds from the option's list of words.
+  def pattern(key)
+    value = options[key]
+    value.is_a?(Regexp) ? value : yield(value)
+  end
+
+  # A trailing period is optional unless the title itself ends with one.
+  def titles(words)
+    words.map { |word|
+      word.end_with?('.') ? Regexp.escape(word) : "#{Regexp.escape(word)}\\.?"
+    }.join('|')
   end
 
   def normalize(string)
@@ -288,6 +325,7 @@ require 'strscan'
 
   def consume_word(type, word)
     @words += 1
+    @particle_first = %i[LWORD UPARTICLE].include?(type) if @words == 1
     @leading = false
     @initial = false
 
@@ -316,10 +354,7 @@ require 'strscan'
 
   # Trailing titles must follow at least two name words and end the name.
   def will_see_trailing_titles?
-    @words >= 2 &&
-      input.check(memo(:trailing_titles, trailing_title, separator, comma) {
-        /(#{trailing_title})+(#{separator}|\s*#{comma}|\s*\z)/
-      })
+    @words >= 2 && input.check(trailing_titles)
   end
 
   def will_see_initial?
@@ -329,20 +364,19 @@ require 'strscan'
   # A comma ends the current name if the name is complete: either it
   # has initials before the last word (e.g., "J. Smith" can only be in
   # display order) or, if commas are preferred as separators, it has
-  # at least two words and is not followed by initials or a single word
-  # (e.g., "Brinch Hansen, Per").
+  # at least two words, does not start with a particle (e.g., "Da Silva,
+  # Luiz Inácio"), and is not followed by initials or a single word (e.g.,
+  # "Brinch Hansen, Per").
   def seen_full_name?
     return false if will_see_suffix?
     return true if @initials > 0 && !@initial
 
-    prefer_comma_as_separator? && @words > 1 &&
+    prefer_comma_as_separator? && @words > 1 && !@particle_first &&
       (@initials > 0 || !will_see_initial?) && !will_see_single_word?
   end
 
   def will_see_single_word?
-    input.check(memo(:single_word, stops, separator, comma) {
-      /[^\s#{stops}]+(#{separator}|\s*#{comma}|\s*\z)/
-    })
+    input.check(single_word)
   end
 
   def next_token

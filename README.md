@@ -126,16 +126,25 @@ can set the `:include_particle_in_family` parser option.
     Namae.parse 'Ludwig von Beethoven'
     #-> [#<Name family="Beethoven" given="Ludwig" particle="von">]
 
-    Namae.options[:include_particle_in_family] = true
+    Namae.configure { |options| options[:include_particle_in_family] = true }
+    Namae.parse 'Ludwig von Beethoven'
     #-> [#<Name family="von Beethoven" given="Ludwig">]
 
 Configuration
 -------------
 You can tweak some of Namae's parse rules by configuring the parser's
 options. Take a look at `Namae.options` to see your current settings.
-If you want to change the default settings for all parsers, you can run
-`Namae.configure` which will yield the default options (make sure to
-change the configuration before using the parser).
+The options are read-only; to change them, run `Namae.configure`, which
+yields a writable copy of the default options and applies the result to
+all parsers (list values are frozen, so assign new lists instead of
+changing them in place):
+
+    Namae.configure do |options|
+      options[:prefer_comma_as_separator] = true
+    end
+
+To use different options for a single parser instead, pass them to
+`Namae::Parser.new`; a parser's options cannot be changed later.
 
 Titles are configured as lists of words: `:title` for titles that precede
 the name (e.g., 'Dr', 'Sir') and `:trailing_title` for titles that follow
@@ -143,11 +152,21 @@ it (e.g., 'PhD', 'MD').
 Words that double as names (e.g., 'Elder', 'Pastor' or 'Cantor')
 are left out of the defaults, so adjust the lists to your data:
 
-    Namae.options[:title] = Namae.options[:title] - %w[Lord] + %w[Elder Sen]
-    Namae.options[:trailing_title] = Namae.options[:trailing_title] + %w[MBA]
+    Namae.configure do |options|
+      options[:title] = options[:title] - %w[Lord] + %w[Elder Sen]
+      options[:trailing_title] += %w[MBA]
+    end
 
     Namae.parse 'Sen. Jane Doe, MBA'
     #-> [#<Name family="Doe" given="Jane" title="Sen. MBA">]
+
+Names in a list are separated by 'and', '&' or ';'. To parse lists in
+other languages, add the corresponding words (some, like Spanish 'y',
+also join the parts of a single name, so add them with care):
+
+    Namae.configure { |options| options[:separator] += %w[und] }
+    Namae.parse 'Max Weber und Karl Marx'
+    #-> [#<Name family="Weber" given="Max">, #<Name family="Marx" given="Karl">]
 
 In lists, a comma may separate two names or the family and given names
 of a single name. Namae uses initials and the number of words to tell
@@ -158,7 +177,7 @@ reads the comma as part of a sort-order name by default. Set the
     Namae.parse 'John Smith, Jane Doe'
     #-> [#<Name family="John Smith" given="Jane Doe">]
 
-    Namae.options[:prefer_comma_as_separator] = true
+    Namae.configure { |options| options[:prefer_comma_as_separator] = true }
     Namae.parse 'John Smith, Jane Doe'
     #-> [#<Name family="Smith" given="John">, #<Name family="Doe" given="Jane">]
 
@@ -171,9 +190,9 @@ A Note On Thread Safety
 -----------------------
 When using the top-level parse functions, Namae will re-use a thread-local
 parser instance (`Namae::Parser.instance`); the instance is created, using
-the current default options (`Namae::Parser.defaults`). If you need more
-control, you are encouraged to create individual parser instances using
-`Namae::Parser.new`.
+the current default options (`Namae::Parser.defaults`), and replaced when
+the defaults change. If you need more control, you are encouraged to create
+individual parser instances using `Namae::Parser.new`.
 
 
 Rationale
