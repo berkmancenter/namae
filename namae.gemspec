@@ -1,8 +1,4 @@
-# -*- encoding: utf-8 -*-
-lib = File.expand_path('../lib/', __FILE__)
-$:.unshift lib unless $:.include?(lib)
-
-require 'namae/version'
+require_relative 'lib/namae/version'
 
 Gem::Specification.new do |s|
   s.name = 'namae'
@@ -21,19 +17,22 @@ Gem::Specification.new do |s|
     parts (e.g., given and family names, honorifics etc.).
   }.gsub(/\s+/, ' ')
 
+  s.metadata = {
+    'source_code_uri' => 'https://github.com/berkmancenter/namae',
+    'bug_tracker_uri' => 'https://github.com/berkmancenter/namae/issues',
+    'rubygems_mfa_required' => 'true'
+  }
+
   s.required_ruby_version = '>= 3.1'
   s.add_dependency('racc', '~> 1.7')
 
-  s.require_path = 'lib'
-
   s.rdoc_options = %w{
     --line-numbers
-    --inline-source
-    --title 'Namae'
+    --title Namae
     --main README.md
     --exclude lib/namae/parser.rb
   }
-  s.extra_rdoc_files = %w{README.md AGPL BSDL}
+  s.extra_rdoc_files = %w{README.md BSDL AGPL}
 
-  s.files = `git ls-files -- lib`.split("\n") + %w[AGPL BSDL README.md]
+  s.files = Dir['lib/**/*.{rb,y}'] + %w[AGPL BSDL README.md]
 end

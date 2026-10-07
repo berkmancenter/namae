@@ -5,7 +5,6 @@ cultural backgrounds and tries to split them into their component parts
 (e.g., given and family names, honorifics etc.).
 
 [![CI](https://github.com/berkmancenter/namae/actions/workflows/ci.yml/badge.svg)](https://github.com/berkmancenter/namae/actions/workflows/ci.yml)
-[![Coverage](https://coveralls.io/repos/github/berkmancenter/namae/badge.svg?branch=master)](https://coveralls.io/github/berkmancenter/namae?branch=master)
 [![Gem Version](https://badge.fury.io/rb/namae.svg)](https://badge.fury.io/rb/namae)
 
 Quickstart
