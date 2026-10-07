@@ -1,3 +1,12 @@
+# BibTeX column names are aliases for the Namae parts.
+PARTS = Hash.new { |_, key| key.to_sym }.merge(
+  'first' => :given, 'von' => :particle, 'last' => :family, 'jr' => :suffix
+)
+
+def parts(name, columns)
+  columns.to_h { |column| [column, name[PARTS[column]].to_s] }
+end
+
 Given(/^a parser that prefers commas as separators$/) do
   Namae::Parser.instance.options[:prefer_comma_as_separator] = true
 end
@@ -6,40 +15,19 @@ Given(/^I want to include particles in the family name$/) do
   Namae::Parser.instance.options[:include_particle_in_family] = true
 end
 
-
-When(/^I parse the name "(.*)"$/) do |string|
-  @name = Namae.parse!(string)[0]
-end
-
-When(/^I parse the names "(.*)"$/) do |string|
+When(/^I parse the names? "(.*)"$/) do |string|
   @names = Namae.parse!(string)
 end
 
-
-Then(/^the BibTeX parts should be:$/) do |table|
-  table.hashes.each do |row|
-    expect(
-      @name.values_at(:given, :particle, :family, :suffix).map(&:to_s)
-    ).to eq(row.values_at('first', 'von', 'last', 'jr'))
-  end
-end
-
 Then(/^the parts should be:$/) do |table|
-  table.hashes.each do |row|
-    expect(
-      @name.values_at(:given, :particle, :family, :suffix, :title, :appellation, :nick).map(&:to_s)
-    ).to eq(row.values_at('given', 'particle', 'family', 'suffix', 'title', 'appellation', 'nick'))
-  end
-end
-
-Then(/^there should be (\d+) names$/) do |count|
-  expect(@names.length).to eq(count.to_i)
+  row = table.hashes.first
+  expect(@names.length).to eq(1)
+  expect(parts(@names[0], row.keys)).to eq(row)
 end
 
 Then(/^the names should be:$/) do |table|
+  expect(@names.length).to eq(table.hashes.length)
   table.hashes.each_with_index do |row, i|
-    expect(
-      @names[i].values_at(*row.keys.map(&:to_sym)).map(&:to_s)
-    ).to eq(row.values)
+    expect(parts(@names[i], row.keys)).to eq(row)
   end
 end

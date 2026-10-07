@@ -1,0 +1,2 @@
+default: --format progress --publish-quiet --tags "not @wip"
+wip: --publish-quiet --tags @wip --wip
