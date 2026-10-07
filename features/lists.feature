@@ -191,3 +191,16 @@ Feature: Parse a list of names
     Then the names should be:
       | given | family    |
       | Anna  | Grundmann |
+
+  @wip
+  Scenario Outline: A list of display-order names with suffixes separated by commas
+    When I parse the names "<names>"
+    Then the names should be:
+      | given   | family   | suffix   |
+      | <given> | <family> | <suffix> |
+      | Jane    | Doe      |          |
+
+    Examples:
+      | names                     | given | family  | suffix |
+      | Ken Griffey Jr., Jane Doe | Ken   | Griffey | Jr.    |
+      | Henry VIII, Jane Doe      | Henry |         | VIII   |

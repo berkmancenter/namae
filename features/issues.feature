@@ -92,3 +92,37 @@ Feature: Parse names reported in GitHub issues
     Then the parts should be:
       | given | family | pronouns |
       | Alex  | Martin | elle/iel |
+
+  @wip
+  Scenario Outline: Reported names we may want to address
+    When I parse the name "<name>"
+    Then the parts should be:
+      | given   | particle   | family   | suffix   |
+      | <given> | <particle> | <family> | <suffix> |
+
+    Examples: #21 Lowercase given names
+      | name       | given | particle | family | suffix |
+      | bell hooks | bell  |          | hooks  |        |
+      | danah boyd | danah |          | boyd   |        |
+
+    Examples: #25 and #37 CJK names in family-name-first order
+      | name      | given | particle | family | suffix |
+      | 山田 太郎 | 太郎  |          | 山田   |        |
+      | 김 민준   | 민준  |          | 김     |        |
+      | 习近平    | 近平  |          | 习     |        |
+
+    Examples: #35 Single-letter suffixes
+      | name          | given | particle | family | suffix |
+      | Adam Burren V | Adam  |          | Burren | V      |
+
+    Examples: #47 Given names that look like particles
+      | name              | given    | particle | family   | suffix |
+      | De Alton Saunders | De Alton |          | Saunders |        |
+
+  @wip
+  Scenario: #38 Family name shared by names joined by 'and'
+    When I parse the names "Larry and Irene Smeltzer"
+    Then the names should be:
+      | given | family   |
+      | Larry | Smeltzer |
+      | Irene | Smeltzer |
