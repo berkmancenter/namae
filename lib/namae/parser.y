@@ -42,13 +42,23 @@ rule
          result = Name.new(
            :given => val[0], :nick => val[1], :particle => val[2], :family => val[3], :suffix => val[4], :title => val[5])
        }
-       | u_words von last
+       | u_words von last opt_suffices opt_titles
        {
-         result = Name.new(:given => val[0], :particle => val[1], :family => val[2])
+         result = Name.new(
+           :given => val[0], :particle => val[1], :family => val[2], :suffix => val[3], :title => val[4]
+         )
        }
-       | von last
+       | von last opt_suffices opt_titles
        {
-         result = Name.new(:particle => val[0], :family => val[1])
+         result = Name.new(
+           :particle => val[0], :family => val[1], :suffix => val[2], :title => val[3]
+         )
+       }
+       | NICK u_words word opt_suffices opt_titles
+       {
+         result = Name.new(
+           :nick => val[0], :given => val[1], :family => val[2], :suffix => val[3], :title => val[4]
+         )
        }
 
   sort_order : last COMMA first
@@ -88,6 +98,7 @@ rule
           }
 
   given : words                    { result = { :given => val[0] } }
+        | words NICK               { result = { :given => val[0], :nick => val[1] } }
         | words opt_comma suffices { result = { :given => val[0], :suffix => val[2] } }
         | suffices                 { result = { :suffix => val[0] } }
         | suffices COMMA words     { result = { :given => val[2], :suffix => val[0] } }
@@ -127,13 +138,18 @@ require 'strscan'
     :stops => ',;',
     :separator => %w[and & ;].freeze,
     :et_al => /\s*\b(et\s+al\b\.?|and\s+others\b)\s*\z/i,
-    :title => %w[
+    :pronoun => %w[
+      he him his she her hers they them their theirs
+      xe xem xyr ze zir hir er ihm sie ihr
+    ].freeze,
+    :title => [
+      'Lt Col', 'Lt Gen', 'Maj Gen', 'Brig Gen', *%w[
       Sir Dame Lord Lady Count Countess Baroness Hon.
       General Gen. Admiral Adm Colonel Col. Maj. Captain Capt
       Commander Cmdr Lieutenant Lt Sergeant Sgt Cpl Pvt
       Reverend Rev Pr Father Sister Brother Deaconess Rabbi Vicar
       Archbishop Msgr Professor Prof Doctor Dr
-    ].freeze,
+    ]].freeze,
     :trailing_title => %w[
       PhD Ph.D DPhil EdD Ed.D PsyD MD M.D DDS DVM JD J.D RN Esq
     ].freeze,
@@ -171,7 +187,7 @@ require 'strscan'
   @defaults = freeze_options(@defaults)
 
   attr_reader :options, :defaults, :input,
-    :separator, :title, :trailing_title, :trailing_titles, :single_word
+    :separator, :title, :trailing_title, :trailing_titles, :single_word, :pronouns
 
   # @param options [Hash] options that override the current defaults;
   #   the parser's options cannot be changed later.
@@ -235,6 +251,7 @@ require 'strscan'
     names = Names.new(do_parse)
     names.map(&:merge_particles!) if include_particle_in_family?
     names.others = @others
+    @pronouns_of.each { |index, pronouns| names[index]&.pronouns = pronouns }
     names
   end
 
@@ -266,6 +283,13 @@ require 'strscan'
       /\s*\b(#{titles(words)})(?![^\s#{stops}])\s*/i
     end
 
+    # Pronouns in parentheses (e.g., '(he/him)'): at least two words, all
+    # of them pronouns, separated by slashes or commas.
+    @pronouns = pattern(:pronoun) do |words|
+      pronoun = /\b(#{words.map { |word| Regexp.escape(word) }.join('|')})\b/i
+      /\s*\(\s*(#{pronoun}(\s*[\/,]\s*#{pronoun})+)\s*\)/
+    end
+
     end_of_name = /(#{separator}|\s*#{comma}|\s*\z)/
     @trailing_titles = /(#{trailing_title})+#{end_of_name}/
     @single_word = /[^\s#{stops}]+#{end_of_name}/
@@ -280,7 +304,8 @@ require 'strscan'
 
   # A trailing period is optional unless the title itself ends with one.
   def titles(words)
-    words.map { |word|
+    # Longer titles first, so that 'Lt Col' wins over 'Lt'.
+    words.sort_by { |word| -word.length }.map { |word|
       word.end_with?('.') ? Regexp.escape(word) : "#{Regexp.escape(word)}\\.?"
     }.join('|')
   end
@@ -291,12 +316,16 @@ require 'strscan'
 
   def reset
     @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?
+    @seen_initial = false
 
     # Titles and appellations are not counted as words; they are only
     # recognized while leading (at the start of a name or the given part
     # of a sort-order name) or, for trailing titles, at the end of a name.
     @leading = true
     @others = false
+    @pending = nil
+    @name_index = 0
+    @pronouns_of = {}
     self
   end
 
@@ -313,7 +342,9 @@ require 'strscan'
   def consume_separator
     return next_token if seen_separator?
     @commas, @words, @initials, @suffices = 0, 0, 0, 0
+    @seen_initial = false
     @leading = true
+    @name_index += 1
     [:AND, :AND]
   end
 
@@ -331,8 +362,11 @@ require 'strscan'
 
     case type
     when :UWORD
-      @initial = word.match?(/^[[:upper:]]+\b/)
-      @initials += 1 if @initial
+      @initials += 1 if word.match?(/^[[:upper:]]+\b/)
+      # Only single letters or dotted letters (e.g., 'G', 'J.', 'J.A.')
+      # count as initials here, not all-caps words (e.g., 'LEWIS').
+      @initial = word.match?(/\A([[:upper:]]\.?|([[:upper:]]\.)+)\z/)
+      @seen_initial ||= @initial
     when :SUFFIX
       @suffices += 1
     end
@@ -369,7 +403,7 @@ require 'strscan'
   # "Brinch Hansen, Per").
   def seen_full_name?
     return false if will_see_suffix?
-    return true if @initials > 0 && !@initial
+    return true if @seen_initial && !@initial
 
     prefer_comma_as_separator? && @words > 1 && !@particle_first &&
       (@initials > 0 || !will_see_initial?) && !will_see_single_word?
@@ -380,9 +414,18 @@ require 'strscan'
   end
 
   def next_token
+    if @pending
+      token, @pending = @pending, nil
+      return token
+    end
+
     case
     when input.nil?, input.eos?
       nil
+    when input.scan(pronouns)
+      # Pronouns are not part of the grammar: keep them for the current name.
+      @pronouns_of[@name_index] = input[1]
+      next_token
     when input.scan(et_al)
       @others = true
       nil
@@ -406,7 +449,15 @@ require 'strscan'
     when will_see_trailing_titles? && input.scan(trailing_title)
       [:TITLE, input.matched.strip]
     when input.scan(suffix)
-      consume_word(:SUFFIX, input.matched.strip)
+      suffix = input.matched.strip
+      if @commas.zero? && (@words == 1 || @particle_first) && input.check(/\s*#{comma}/)
+        # Read 'Gump Jr., Bubba' as 'Gump, Jr., Bubba'.
+        token = consume_comma
+        @pending = consume_word(:SUFFIX, suffix)
+        token
+      else
+        consume_word(:SUFFIX, suffix)
+      end
     when input.scan(uppercase_particle)
       consume_word(:UPARTICLE, input.matched.strip)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{stops}]*/)
@@ -415,8 +466,10 @@ require 'strscan'
       consume_word(:LWORD, input.matched)
     when input.scan(/(\\\w+)?\{[^\}]*\}[^\s#{stops}]*/)
       consume_word(:PWORD, input.matched)
-    when input.scan(/('[^'\n]+')|("[^"\n]+")/)
-      consume_word(:NICK, input.matched[1...-1])
+    when input.scan(/('[^'\n]+')|("[^"\n]+")|(\(\s*['"]?[[:upper:]][^()\d.\n]*\))/)
+      # Nicknames in quotes or parentheses, e.g., 'Mike', (Mike) or ('Mike');
+      # in parentheses, they must not look like '(ed.)' or '(2001)'.
+      consume_word(:NICK, input.matched[1...-1].strip.sub(/\A(['"])(.*)\1\z/, '\\2'))
     when input.scan(/[@\d][^\s#{stops}]*[[:alpha:]][^\s#{stops}]*/)
       # Handles and other words starting with @ or a digit
       consume_word(:PWORD, input.matched)

@@ -19,8 +19,11 @@ Given(/^I want to include particles in the family name$/) do
   options[:include_particle_in_family] = true
 end
 
-Given(/^I add "(.*)" to the (titles|trailing titles|separators)$/) do |word, list|
-  key = { 'titles' => :title, 'trailing titles' => :trailing_title, 'separators' => :separator }[list]
+Given(/^I add "(.*)" to the (titles|trailing titles|separators|pronouns)$/) do |word, list|
+  key = {
+    'titles' => :title, 'trailing titles' => :trailing_title,
+    'separators' => :separator, 'pronouns' => :pronoun
+  }[list]
   options[key] = options.fetch(key, Namae::Parser.defaults[key]) + [word]
 end
 

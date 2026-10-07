@@ -181,6 +181,12 @@ reads the comma as part of a sort-order name by default. Set the
     Namae.parse 'John Smith, Jane Doe'
     #-> [#<Name family="Smith" given="John">, #<Name family="Doe" given="Jane">]
 
+Nicknames are recognized in quotes or parentheses, and pronouns in
+parentheses when all their words are in the `:pronoun` list:
+
+    Namae.parse 'Sam (Sammy) Doe (they/them)'
+    #-> [#<Name family="Doe" given="Sam" nick="Sammy" pronouns="they/them">]
+
 A list ending in 'et al.' or 'and others' is marked as such:
 
     Namae.parse('Smith, John, et al.').others?
