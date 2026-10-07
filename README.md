@@ -149,6 +149,24 @@ are left out of the defaults, so adjust the lists to your data:
     Namae.parse 'Sen. Jane Doe, MBA'
     #-> [#<Name family="Doe" given="Jane" title="Sen. MBA">]
 
+In lists, a comma may separate two names or the family and given names
+of a single name. Namae uses initials and the number of words to tell
+these apart; when that is not enough (e.g., 'John Smith, Jane Doe'), it
+reads the comma as part of a sort-order name by default. Set the
+`:prefer_comma_as_separator` option to read it as a separator instead:
+
+    Namae.parse 'John Smith, Jane Doe'
+    #-> [#<Name family="John Smith" given="Jane Doe">]
+
+    Namae.options[:prefer_comma_as_separator] = true
+    Namae.parse 'John Smith, Jane Doe'
+    #-> [#<Name family="Smith" given="John">, #<Name family="Doe" given="Jane">]
+
+A list ending in 'et al.' or 'and others' is marked as such:
+
+    Namae.parse('Smith, John, et al.').others?
+    #-> true
+
 A Note On Thread Safety
 -----------------------
 When using the top-level parse functions, Namae will re-use a thread-local

@@ -37,3 +37,7 @@ Then(/^the names should be:$/) do |table|
     expect(parts(@names[i], row.keys)).to eq(row)
   end
 end
+
+Then(/^the list should (not )?be followed by others$/) do |negate|
+  expect(@names.others?).to eq(!negate)
+end

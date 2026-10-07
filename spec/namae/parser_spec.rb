@@ -161,6 +161,16 @@ module Namae
           end
         end
 
+        it 'returns Names' do
+          expect(parser.parse!('foo')).to be_a(Names)
+          expect(parser.parse('???')).to be_a(Names)
+        end
+
+        it 'flags lists ending in "et al."' do
+          expect(parser.parse!('Smith, John, et al.')).to be_others
+          expect(parser.parse!('Smith, John')).not_to be_others
+        end
+
         describe 'when parsing a single name' do
 
           it 'treats "Ichiro" as a given name' do

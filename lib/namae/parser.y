@@ -126,6 +126,7 @@ require 'strscan'
     :comma => ',',
     :stops => ',;',
     :separator => /\s*(\band\b|\&|;)\s*/i,
+    :et_al => /\s*\b(et\s+al\b\.?|and\s+others\b)\s*\z/i,
     :title => %w[
       Sir Dame Lord Lady Count Countess Baroness Hon.
       General Gen. Admiral Adm Colonel Col. Maj. Captain Capt
@@ -175,6 +176,10 @@ require 'strscan'
     options[:stops]
   end
 
+  def et_al
+    options[:et_al]
+  end
+
   # Titles precede the name.
   def title
     memo(:title, options[:title]) do
@@ -209,14 +214,15 @@ require 'strscan'
     parse!(string)
   rescue => e
     warn e.message if debug?
-    []
+    Names.new
   end
 
   def parse!(string)
     @input = StringScanner.new(normalize(string))
     reset
-    names = do_parse
+    names = Names.new(do_parse)
     names.map(&:merge_particles!) if include_particle_in_family?
+    names.others = @others
     names
   end
 
@@ -253,6 +259,7 @@ require 'strscan'
     # recognized while leading (at the start of a name or the given part
     # of a sort-order name) or, for trailing titles, at the end of a name.
     @leading = true
+    @others = false
     self
   end
 
@@ -282,10 +289,12 @@ require 'strscan'
   def consume_word(type, word)
     @words += 1
     @leading = false
+    @initial = false
 
     case type
     when :UWORD
-      @initials += 1 if word =~ /^[[:upper:]]+\b/
+      @initial = word.match?(/^[[:upper:]]+\b/)
+      @initials += 1 if @initial
     when :SUFFIX
       @suffices += 1
     end
@@ -317,19 +326,37 @@ require 'strscan'
     input.rest.strip.split(/\s+/)[0] =~ /^[[:upper:]]+\b/
   end
 
+  # A comma ends the current name if the name is complete: either it
+  # has initials before the last word (e.g., "J. Smith" can only be in
+  # display order) or, if commas are preferred as separators, it has
+  # at least two words and is not followed by initials or a single word
+  # (e.g., "Brinch Hansen, Per").
   def seen_full_name?
+    return false if will_see_suffix?
+    return true if @initials > 0 && !@initial
+
     prefer_comma_as_separator? && @words > 1 &&
-      (@initials > 0 || !will_see_initial?) && !will_see_suffix?
+      (@initials > 0 || !will_see_initial?) && !will_see_single_word?
+  end
+
+  def will_see_single_word?
+    input.check(memo(:single_word, stops, separator, comma) {
+      /[^\s#{stops}]+(#{separator}|\s*#{comma}|\s*\z)/
+    })
   end
 
   def next_token
     case
     when input.nil?, input.eos?
       nil
+    when input.scan(et_al)
+      @others = true
+      nil
     when input.scan(separator)
       consume_separator
     when input.scan(/\s*#{comma}\s*/)
-      if last_token == :COMMA || will_see_trailing_titles?
+      if last_token == :COMMA || input.check(separator) || input.check(et_al) ||
+          will_see_trailing_titles?
         next_token
       elsif @commas.zero? && !seen_full_name? || @commas == 1 && suffix?
         consume_comma

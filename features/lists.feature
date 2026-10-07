@@ -133,3 +133,41 @@ Feature: Parse a list of names
       | Alice  |
       | @jdoe  |
       | 42jdoe |
+
+  Scenario: A list with an inverted first name and an Oxford comma
+    When I parse the names "Smith, John, Jane Doe, and Bob Lee"
+    Then the names should be:
+      | given | family |
+      | John  | Smith  |
+      | Jane  | Doe    |
+      | Bob   | Lee    |
+
+  Scenario: A list of display-order names with initials separated by commas
+    When I parse the names "Brian W. Kernighan, Dennis M. Ritchie, and D. E. Knuth"
+    Then the names should be:
+      | given     | family    |
+      | Brian W.  | Kernighan |
+      | Dennis M. | Ritchie   |
+      | D. E.     | Knuth     |
+
+  Scenario: A list of sort-order names with multi-word family names
+    Given a parser that prefers commas as separators
+    When I parse the names "Brinch Hansen, Per, Carreño Quiñones, María-Jose, Jane Doe"
+    Then the names should be:
+      | given      | family           |
+      | Per        | Brinch Hansen    |
+      | María-Jose | Carreño Quiñones |
+      | Jane       | Doe              |
+
+  Scenario Outline: A list ending with et al.
+    When I parse the names "<names>"
+    Then the names should be:
+      | given | family |
+      | John  | Smith  |
+    And the list should be followed by others
+
+    Examples:
+      | names                  |
+      | John Smith et al.      |
+      | Smith, John, et al.    |
+      | Smith, John and others |

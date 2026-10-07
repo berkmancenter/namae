@@ -24,7 +24,7 @@ module Namae
   # @see parse!
   #
   # @param names [String] the name or names to be parsed
-  # @return [Array] the list of parsed names
+  # @return [Names] the list of parsed names
   def parse(names)
     Parser.instance.parse(names)
   end
@@ -32,7 +32,7 @@ module Namae
   # Parses the passed-in string and returns a list of names.
   #
   # @param names [String] the name or names to be parsed
-  # @return [Array] the list of parsed names
+  # @return [Names] the list of parsed names
   #
   # @raise [ArgumentError] if the string cannot be parsed.
   def parse!(names)
