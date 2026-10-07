@@ -26,6 +26,7 @@ Feature: Parse BibTeX-style names
       | AA {bb} cc DD   | AA {bb}    | cc       | DD      |    |
       | AA bb {cc} DD   | AA         | bb       | {cc} DD |    |
       | AA {bb} CC      | AA {bb}    |          | CC      |    |
+      | AA 1B cc dd     | AA 1B      | cc       | dd      |    |
 
     Examples: Décoret test suite (sort order)
       | name            | first | von      | last | jr |
@@ -38,6 +39,7 @@ Feature: Parse BibTeX-style names
       | bb CC,jr, AA    | AA    | bb       | CC   | jr |
       | CC dd BB, AA    | AA    | CC dd    | BB   |    |
       | BB, AA          | AA    |          | BB   |    |
+      | BB,, AA         | AA    |          | BB   |    |
 
     Examples: Long von parts
       | name            | first | von      | last | jr |
@@ -65,13 +67,3 @@ Feature: Parse BibTeX-style names
       | {Barnes and} {Noble, Inc.}                       | {Barnes and}                |       | {Noble, Inc.}     |     |
       | {Barnes} {and} {Noble,} {Inc.}                   | {Barnes} {and} {Noble,}     |       | {Inc.}            |     |
       | Charles Louis Xavier Joseph de la Vallee Poussin | Charles Louis Xavier Joseph | de la | Vallee Poussin    |     |
-
-    @wip
-    Examples: Known limitations
-      | name                     | first | von   | last                     | jr |
-      | AA                       |       |       | AA                       |    |
-      | aa                       |       |       | aa                       |    |
-      | AA 1B cc dd              | AA 1B | cc    | dd                       |    |
-      | AA 1b cc dd              | AA    | 1b cc | dd                       |    |
-      | BB,, AA                  | AA    |       | BB                       |    |
-      | {Barnes and Noble, Inc.} |       |       | {Barnes and Noble, Inc.} |    |

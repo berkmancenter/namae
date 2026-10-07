@@ -16,7 +16,12 @@ rule
   name : word            { result = Name.new(:given => val[0]) }
        | display_order
        | honorific word          { result = val[0].merge(:family => val[1]) }
-       | honorific display_order { result = val[1].merge(val[0]) }
+       | honorific display_order
+         {
+           titles = [val[0].title, val[1].title].compact
+           result = val[1].merge(val[0])
+           result.title = titles.join(' ') unless titles.empty?
+         }
        | sort_order
 
   honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
@@ -116,9 +121,18 @@ require 'strscan'
     :comma => ',',
     :stops => ',;',
     :separator => /\s*(\band\b|\&|;)\s*/i,
-    :title => /\s*\b(sir|lord|count(ess)?|(gen|adm|col|maj|capt|cmdr|lt|sgt|cpl|pvt|pastor|pr|reverend|rev|elder|deacon|deaconess|father|fr|rabbi|cantor|vicar|prof|dr|md|ph\.?d)\.?)(\s+|$)/i,
-    :suffix => /\s*\b(JR|Jr|jr|SR|Sr|sr|[IVX]{2,})(\.|\b)/,
-    :appellation => /\s*\b((mrs?|ms|fr|hr)\.?|miss|herr|frau)(\s+|$)/i,
+    :title => %w[
+      Sir Dame Lord Lady Count Countess Baroness Hon.
+      General Gen. Admiral Adm Colonel Col. Maj. Captain Capt
+      Commander Cmdr Lieutenant Lt Sergeant Sgt Cpl Pvt
+      Reverend Rev Pr Father Sister Brother Deaconess Rabbi Vicar
+      Archbishop Msgr Professor Prof Doctor Dr
+    ],
+    :trailing_title => %w[
+      PhD Ph.D DPhil EdD Ed.D PsyD MD M.D DDS DVM JD J.D RN Esq
+    ],
+    :suffix => /\s*\b(JR|Jr|jr|JNR|Jnr|jnr|SR|Sr|sr|SNR|Snr|snr|[IVX]{2,}|[1-9]\d*(st|nd|rd|th))(\.|\b)/,
+    :appellation => /\s*\b((mrs?|mx|ms|fr|hr|mme|mlle)\.?|miss|herr|frau)(\s+|$)/i,
     :uppercase_particle => /\s*\b(D[aiu]|De[rs]?|St\.?|Saint|La|Les|V[ao]n)(\s+|$)/
   }
 
@@ -156,8 +170,18 @@ require 'strscan'
     options[:stops]
   end
 
+  # Titles precede the name.
   def title
-    options[:title]
+    memo(:title, options[:title]) do
+      compile(options[:title], /(?=\s|\z)\s*/)
+    end
+  end
+
+  # Trailing titles follow the name, optionally after a comma.
+  def trailing_title
+    memo(:trailing_title, options[:trailing_title], stops) do
+      compile(options[:trailing_title], /(?![^\s#{stops}])\s*/)
+    end
   end
 
   def suffix
@@ -191,12 +215,26 @@ require 'strscan'
     names
   end
 
+  def compile(words, boundary)
+    return words if words.is_a?(Regexp)
+
+    # A trailing period is optional unless the word itself ends with one.
+    words = words.map { |word| word.end_with?('.') ? Regexp.escape(word) : "#{Regexp.escape(word)}\\.?" }
+    /\s*\b(#{words.join('|')})#{boundary}/i
+  end
+
+  # Caches patterns derived from options; the key includes the option
+  # values so that changing an option invalidates the cached pattern.
+  def memo(*key)
+    (@memo ||= {})[key] ||= yield
+  end
+
   def normalize(string)
     string.scrub.strip
   end
 
   def reset
-    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?
+    @commas, @words, @titles, @initials, @suffices, @yydebug = 0, 0, 0, 0, 0, debug?
     self
   end
 
@@ -212,7 +250,7 @@ require 'strscan'
 
   def consume_separator
     return next_token if seen_separator?
-    @commas, @words, @initials, @suffices = 0, 0, 0, 0
+    @commas, @words, @titles, @initials, @suffices = 0, 0, 0, 0, 0
     [:AND, :AND]
   end
 
@@ -229,6 +267,8 @@ require 'strscan'
       @initials += 1 if word =~ /^[[:upper:]]+\b/
     when :SUFFIX
       @suffices += 1
+    when :TITLE
+      @titles += 1
     end
 
     [type, word]
@@ -244,6 +284,18 @@ require 'strscan'
 
   def will_see_suffix?
     input.rest.strip.split(/\s+/)[0] =~ suffix
+  end
+
+  def seen_only_titles?
+    @words == @titles
+  end
+
+  # Trailing titles must follow at least two name words and end the name.
+  def will_see_trailing_titles?
+    @words - @titles >= 2 &&
+      input.check(memo(:trailing_titles, trailing_title, separator, comma) {
+        /(#{trailing_title})+(#{separator}|\s*#{comma}|\s*\z)/
+      })
   end
 
   def will_see_initial?
@@ -262,14 +314,18 @@ require 'strscan'
     when input.scan(separator)
       consume_separator
     when input.scan(/\s*#{comma}\s*/)
-      if @commas.zero? && !seen_full_name? || @commas == 1 && suffix?
+      if last_token == :COMMA || will_see_trailing_titles?
+        next_token
+      elsif @commas.zero? && !seen_full_name? || @commas == 1 && suffix?
         consume_comma
       else
         consume_separator
       end
     when input.scan(/\s+/)
       next_token
-    when input.scan(title)
+    when seen_only_titles? && input.scan(title)
+      consume_word(:TITLE, input.matched.strip)
+    when will_see_trailing_titles? && input.scan(trailing_title)
       consume_word(:TITLE, input.matched.strip)
     when input.scan(suffix)
       consume_word(:SUFFIX, input.matched.strip)
@@ -289,6 +345,9 @@ require 'strscan'
       consume_word(:PWORD, input.matched)
     when input.scan(/('[^'\n]+')|("[^"\n]+")/)
       consume_word(:NICK, input.matched[1...-1])
+    when input.scan(/[@\d][^\s#{stops}]*[[:alpha:]][^\s#{stops}]*/)
+      # Handles and other words starting with @ or a digit
+      consume_word(:PWORD, input.matched)
     else
       raise ArgumentError,
         "Failed to parse name #{input.string.inspect}: unmatched data at offset #{input.pos}"

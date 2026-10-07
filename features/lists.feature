@@ -118,3 +118,18 @@ Feature: Parse a list of names
       | given | family    |
       | Ü.    | Çakıroğlu |
       | B.    | Başıbüyük |
+
+  Scenario: A list of names with trailing titles
+    When I parse the names "John Smith, MD and Jane Doe, PhD"
+    Then the names should be:
+      | given | family | title |
+      | John  | Smith  | MD    |
+      | Jane  | Doe    | PhD   |
+
+  Scenario: A list of names with internet handles
+    When I parse the names "Alice and @jdoe and 42jdoe"
+    Then the names should be:
+      | given  |
+      | Alice  |
+      | @jdoe  |
+      | 42jdoe |

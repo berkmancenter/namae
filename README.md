@@ -137,6 +137,18 @@ If you want to change the default settings for all parsers, you can run
 `Namae.configure` which will yield the default options (make sure to
 change the configuration before using the parser).
 
+Titles are configured as lists of words: `:title` for titles that precede
+the name (e.g., 'Dr', 'Sir') and `:trailing_title` for titles that follow
+it (e.g., 'PhD', 'MD').
+Words that double as names (e.g., 'Elder', 'Pastor' or 'Cantor')
+are left out of the defaults, so adjust the lists to your data:
+
+    Namae.options[:title] = Namae.options[:title] - %w[Lord] + %w[Elder Sen]
+    Namae.options[:trailing_title] = Namae.options[:trailing_title] + %w[MBA]
+
+    Namae.parse 'Sen. Jane Doe, MBA'
+    #-> [#<Name family="Doe" given="Jane" title="Sen. MBA">]
+
 A Note On Thread Safety
 -----------------------
 When using the top-level parse functions, Namae will re-use a thread-local

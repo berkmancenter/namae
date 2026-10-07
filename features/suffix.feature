@@ -15,6 +15,8 @@ Feature: Parse names with a suffix
       | Griffey, Ken, Jr. | Ken   | Griffey | Jr.    |
       | Griffey, Ken Jr.  | Ken   | Griffey | Jr.    |
       | Ken Griffey Jr.   | Ken   | Griffey | Jr.    |
+      | John Smith 3rd    | John  | Smith   | 3rd    |
+      | John Smith Jnr    | John  | Smith   | Jnr    |
 
   Scenario: A list of names with suffixes
     When I parse the names "Griffey, Jr., Ken and Ken Griffey, Jr. and Griffey, Ken, Jr. and Ken Griffey Jr."

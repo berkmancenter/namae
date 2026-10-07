@@ -67,7 +67,7 @@ module Namae
           end
         end
 
-        %w{Mr. Mr Mrs. Ms Herr Frau Miss}.each do |appellation|
+        %w{Mr. Mr Mrs. Ms Mx Mme. Herr Frau Fr. Miss}.each do |appellation|
           describe "the next token is #{appellation.inspect}" do
             before { parser.reset.send(:input).string = appellation }
             it 'returns an APPELLATION token' do
@@ -76,7 +76,7 @@ module Namae
           end
         end
 
-        %w{Jr. Jr Sr. Sr II II. VII IX}.each do |suffix|
+        %w{Jr. Jr Jnr Sr. Sr Snr. II II. VII IX 3rd 21st}.each do |suffix|
           describe "the next token is #{suffix.inspect}" do
             before { parser.send(:input).string = suffix }
             it 'returns an SUFFIX token' do
@@ -89,7 +89,24 @@ module Namae
           end
         end
 
-        %w{Ph.D. PhD PHD Dr. Dr Prof.}.each do |title|
+        %w{Ph.D. PhD PHD MD M.D. Esq.}.each do |title|
+          describe "the next token after a name is #{title.inspect}" do
+            before do
+              parser.send(:input).string = "John Smith #{title}"
+              2.times { parser.send(:next_token) }
+            end
+
+            it 'returns a TITLE token' do
+              expect(parser.send(:next_token)).to eq([:TITLE, title])
+            end
+
+            it 'the input matches the trailing title pattern' do
+              expect(parser.trailing_title).to match(title)
+            end
+          end
+        end
+
+        %w{Dr. Dr Prof.}.each do |title|
           describe "the next token is #{title.inspect}" do
             before { parser.send(:input).string = title }
             it 'returns a TITLE token' do
@@ -102,7 +119,7 @@ module Namae
           end
         end
 
-        %w{Gen. Adm Col. Maj Capt. Cmdr. Lt. Sgt. Cpl Pvt.}.each do |title|
+        %w{Gen. Adm Col. Maj. Capt. Cmdr. Lt. Sgt. Cpl Pvt. General Captain}.each do |title|
           describe "the next token is #{title.inspect}" do
             before { parser.send(:input).string = title }
             it 'returns a TITLE token' do
@@ -115,7 +132,7 @@ module Namae
           end
         end
 
-        %w{Pastor Pr. Reverend Rev. Elder Deacon Deaconess Father Fr. Vicar Rabbi Cantor}.each do |title|
+        %w{Pr. Reverend Rev. Deaconess Father Sister Vicar Rabbi Msgr. Sir Dame Hon.}.each do |title|
           describe "the next token is #{title.inspect}" do
             before { parser.send(:input).string = title }
             it 'returns a TITLE token' do
@@ -136,6 +153,12 @@ module Namae
 
         it 'returns a list of names' do
           expect(parser.parse!('foo')[0]).to be_a(Name)
+        end
+
+        ['Smith, J. (ed.)', 'Smith, J. [Hrsg.]', 'Doe, J. (2001)', '?'].each do |input|
+          it "fails to parse #{input.inspect}" do
+            expect { parser.parse!(input) }.to raise_error(ArgumentError)
+          end
         end
 
         describe 'when parsing a single name' do
@@ -189,7 +212,7 @@ module Namae
 
           it 'parses Ph.D. title suffix in display order' do
             expect(parser.parse!('Bernado Franecki Ph.D.')[0].values_at(:given, :family, :title)).to eq(['Bernado', 'Franecki', 'Ph.D.'])
-            #expect(parser.parse!('Bernado Franecki, Ph.D.')[0].values_at(:given, :family, :title)).to eq(['Bernado', 'Franecki', 'Ph.D.'])
+            expect(parser.parse!('Bernado Franecki, Ph.D.')[0].values_at(:given, :family, :title)).to eq(['Bernado', 'Franecki', 'Ph.D.'])
           end
 
           it 'parses consecutive titles in display order' do
@@ -258,6 +281,21 @@ module Namae
         end
       end
 
+    end
+
+    describe 'title options' do
+      it 'accepts a list of titles' do
+        parser = Parser.new(title: %w[Sen.], trailing_title: %w[Esq.])
+        expect(parser.parse!('Sen. John Smith, Esq.')[0].values_at(:given, :family, :title))
+          .to eq(['John', 'Smith', 'Sen. Esq.'])
+        expect(parser.parse!('Dr. John Smith')[0].title).to be_nil
+      end
+
+      it 'accepts a custom pattern' do
+        parser = Parser.new(title: /\s*\b(Sen\.)(\s+|$)/)
+        expect(parser.parse!('Sen. John Smith')[0].values_at(:given, :family, :title))
+          .to eq(['John', 'Smith', 'Sen.'])
+      end
     end
   end
 end

@@ -15,6 +15,12 @@ Given(/^I want to include particles in the family name$/) do
   Namae::Parser.instance.options[:include_particle_in_family] = true
 end
 
+Given(/^I add "(.*)" to the (titles|trailing titles)$/) do |word, list|
+  options = Namae::Parser.instance.options
+  key = list == 'titles' ? :title : :trailing_title
+  options[key] = options[key] + [word]
+end
+
 When(/^I parse the names? "(.*)"$/) do |string|
   @names = Namae.parse!(string)
 end
