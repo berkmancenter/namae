@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
     'rubygems_mfa_required' => 'true'
   }
 
-  s.required_ruby_version = '>= 3.1'
+  s.required_ruby_version = '>= 3.2'
   s.add_dependency('racc', '~> 1.7')
 
   s.rdoc_options = %w{
