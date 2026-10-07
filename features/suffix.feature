@@ -9,14 +9,17 @@ Feature: Parse names with a suffix
       | <given> | <family> | <suffix> |
 
     Examples:
-      | name              | given | family  | suffix |
-      | Griffey, Jr., Ken | Ken   | Griffey | Jr.    |
-      | Ken Griffey, Jr.  | Ken   | Griffey | Jr.    |
-      | Griffey, Ken, Jr. | Ken   | Griffey | Jr.    |
-      | Griffey, Ken Jr.  | Ken   | Griffey | Jr.    |
-      | Ken Griffey Jr.   | Ken   | Griffey | Jr.    |
-      | John Smith 3rd    | John  | Smith   | 3rd    |
-      | John Smith Jnr    | John  | Smith   | Jnr    |
+      | name                  | given | family  | suffix |
+      | Griffey, Jr., Ken     | Ken   | Griffey | Jr.    |
+      | Ken Griffey, Jr.      | Ken   | Griffey | Jr.    |
+      | Griffey, Ken, Jr.     | Ken   | Griffey | Jr.    |
+      | Griffey, Ken Jr.      | Ken   | Griffey | Jr.    |
+      | Ken Griffey Jr.       | Ken   | Griffey | Jr.    |
+      | John Smith 3rd        | John  | Smith   | 3rd    |
+      | John Smith Jnr        | John  | Smith   | Jnr    |
+      | Henry VIII            | Henry |         | VIII   |
+      | Henry 8th             | Henry |         | 8th    |
+      | Smith, John, Jr., PhD | John  | Smith   | Jr.    |
 
   Scenario: A list of names with suffixes
     When I parse the names "Griffey, Jr., Ken and Ken Griffey, Jr. and Griffey, Ken, Jr. and Ken Griffey Jr."

@@ -14,18 +14,16 @@ rule
         | names AND name { result = val[0] << val[2] }
 
   name : word            { result = Name.new(:given => val[0]) }
+       | word suffices   { result = Name.new(:given => val[0], :suffix => val[1]) }
        | display_order
        | honorific word          { result = val[0].merge(:family => val[1]) }
-       | honorific display_order
-         {
-           titles = [val[0].title, val[1].title].compact
-           result = val[1].merge(val[0])
-           result.title = titles.join(' ') unless titles.empty?
-         }
+       | honorific display_order { result = honor(val[1], val[0]) }
        | sort_order
+       | honorific sort_order    { result = honor(val[1], val[0]) }
 
-  honorific : APPELLATION { result = Name.new(:appellation => val[0]) }
-            | titles      { result = Name.new(:title => val[0]) }
+  honorific : APPELLATION        { result = Name.new(:appellation => val[0]) }
+            | titles             { result = Name.new(:title => val[0]) }
+            | APPELLATION titles { result = Name.new(:appellation => val[0], :title => val[1]) }
 
   display_order : u_words word opt_suffices opt_titles
        {
@@ -55,21 +53,19 @@ rule
 
   sort_order : last COMMA first
        {
-         result = Name.new({
-           :family => val[0], :suffix => val[2][0], :given => val[2][1]
-         }, !!val[2][0])
+         result = Name.new(val[2].merge(:family => val[0]), !!val[2][:suffix])
        }
        | von last COMMA first
        {
-         result = Name.new({
-           :particle => val[0], :family => val[1], :suffix => val[3][0], :given => val[3][1]
-         }, !!val[3][0])
+         result = Name.new(val[3].merge(
+           :particle => val[0], :family => val[1]
+         ), !!val[3][:suffix])
        }
        | u_words von last COMMA first
        {
-         result = Name.new({
-           :particle => val[0,2].join(' '), :family => val[2], :suffix => val[4][0], :given => val[4][1]
-         }, !!val[4][0])
+         result = Name.new(val[4].merge(
+           :particle => val[0,2].join(' '), :family => val[2]
+         ), !!val[4][:suffix])
        }
        ;
 
@@ -81,10 +77,20 @@ rule
 
   last : LWORD | u_words
 
-  first : opt_words                 { result = [nil,val[0]] }
-        | words opt_comma suffices  { result = [val[2],val[0]] }
-        | suffices                  { result = [val[0],nil] }
-        | suffices COMMA words      { result = [val[0],val[2]] }
+  first : /* empty */                    { result = {} }
+        | titles                         { result = { :title => val[0] } }
+        | given opt_titles               { result = val[0].merge(:title => val[1]) }
+        | honorific given opt_titles
+          {
+            titles = [val[0].title, val[2]].compact
+            result = val[1].merge(val[0].to_h.compact)
+            result[:title] = titles.join(' ') unless titles.empty?
+          }
+
+  given : words                    { result = { :given => val[0] } }
+        | words opt_comma suffices { result = { :given => val[0], :suffix => val[2] } }
+        | suffices                 { result = { :suffix => val[0] } }
+        | suffices COMMA words     { result = { :given => val[2], :suffix => val[0] } }
 
   u_words : u_word
           | u_words u_word { result = val.join(' ') }
@@ -95,7 +101,6 @@ rule
         | words word { result = val.join(' ') }
 
   opt_comma : /* empty */ | COMMA
-  opt_words : /* empty */ | words
 
   word : LWORD | UWORD | PWORD | UPARTICLE
 
@@ -215,6 +220,14 @@ require 'strscan'
     names
   end
 
+  # Adds an honorific to a name, keeping titles on both sides of the name.
+  def honor(name, honorific)
+    titles = [honorific.title, name.title].compact
+    name.merge(honorific)
+    name.title = titles.join(' ') unless titles.empty?
+    name
+  end
+
   def compile(words, boundary)
     return words if words.is_a?(Regexp)
 
@@ -234,7 +247,12 @@ require 'strscan'
   end
 
   def reset
-    @commas, @words, @titles, @initials, @suffices, @yydebug = 0, 0, 0, 0, 0, debug?
+    @commas, @words, @initials, @suffices, @yydebug = 0, 0, 0, 0, debug?
+
+    # Titles and appellations are not counted as words; they are only
+    # recognized while leading (at the start of a name or the given part
+    # of a sort-order name) or, for trailing titles, at the end of a name.
+    @leading = true
     self
   end
 
@@ -250,25 +268,26 @@ require 'strscan'
 
   def consume_separator
     return next_token if seen_separator?
-    @commas, @words, @titles, @initials, @suffices = 0, 0, 0, 0, 0
+    @commas, @words, @initials, @suffices = 0, 0, 0, 0
+    @leading = true
     [:AND, :AND]
   end
 
   def consume_comma
     @commas += 1
+    @leading = true
     [:COMMA, :COMMA]
   end
 
   def consume_word(type, word)
     @words += 1
+    @leading = false
 
     case type
     when :UWORD
       @initials += 1 if word =~ /^[[:upper:]]+\b/
     when :SUFFIX
       @suffices += 1
-    when :TITLE
-      @titles += 1
     end
 
     [type, word]
@@ -286,13 +305,9 @@ require 'strscan'
     input.rest.strip.split(/\s+/)[0] =~ suffix
   end
 
-  def seen_only_titles?
-    @words == @titles
-  end
-
   # Trailing titles must follow at least two name words and end the name.
   def will_see_trailing_titles?
-    @words - @titles >= 2 &&
+    @words >= 2 &&
       input.check(memo(:trailing_titles, trailing_title, separator, comma) {
         /(#{trailing_title})+(#{separator}|\s*#{comma}|\s*\z)/
       })
@@ -323,18 +338,14 @@ require 'strscan'
       end
     when input.scan(/\s+/)
       next_token
-    when seen_only_titles? && input.scan(title)
-      consume_word(:TITLE, input.matched.strip)
+    when @leading && input.scan(title)
+      [:TITLE, input.matched.strip]
+    when @leading && input.scan(appellation)
+      [:APPELLATION, input.matched.strip]
     when will_see_trailing_titles? && input.scan(trailing_title)
-      consume_word(:TITLE, input.matched.strip)
+      [:TITLE, input.matched.strip]
     when input.scan(suffix)
       consume_word(:SUFFIX, input.matched.strip)
-    when input.scan(appellation)
-      if @words.zero?
-        [:APPELLATION, input.matched.strip]
-      else
-        consume_word(:UWORD, input.matched)
-      end
     when input.scan(uppercase_particle)
       consume_word(:UPARTICLE, input.matched.strip)
     when input.scan(/((\\\w+)?\{[^\}]*\})*[[:upper:]][^\s#{stops}]*/)

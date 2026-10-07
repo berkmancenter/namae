@@ -9,14 +9,24 @@ Feature: Parse names with a title
       | <given> | <family> | <title> | <appellation> |
 
     Examples: Titles before and after the name
-      | name                  | given   | family   | title     | appellation |
-      | Bernado Franecki, PhD | Bernado | Franecki | PhD       |             |
-      | Dr. John Smith, Ph.D. | John    | Smith    | Dr. Ph.D. |             |
-      | John Smith MD, PhD    | John    | Smith    | MD PhD    |             |
-      | John Smith, M.D.      | John    | Smith    | M.D.      |             |
-      | Jane Doe, Esq.        | Jane    | Doe      | Esq.      |             |
-      | Gen. George Patton    | George  | Patton   | Gen.      |             |
-      | Hon. Jane Doe         | Jane    | Doe      | Hon.      |             |
+      | name                         | given         | family   | title     | appellation |
+      | Bernado Franecki, PhD        | Bernado       | Franecki | PhD       |             |
+      | Dr. John Smith, Ph.D.        | John          | Smith    | Dr. Ph.D. |             |
+      | Rev. Martin Luther King, Jr. | Martin Luther | King     | Rev.      |             |
+      | John Smith MD, PhD           | John          | Smith    | MD PhD    |             |
+      | John Smith, M.D.             | John          | Smith    | M.D.      |             |
+      | Jane Doe, Esq.               | Jane          | Doe      | Esq.      |             |
+      | Gen. George Patton           | George        | Patton   | Gen.      |             |
+      | Hon. Jane Doe                | Jane          | Doe      | Hon.      |             |
+
+    Examples: Titles in sort order
+      | name                  | given | family | title     | appellation |
+      | Newton, Sir Isaac     | Isaac | Newton | Sir       |             |
+      | Smith, Prof. Dr. Hans | Hans  | Smith  | Prof. Dr. |             |
+      | Byron, Lord           |       | Byron  | Lord      |             |
+      | Doe, Jane, MD         | Jane  | Doe    | MD        |             |
+      | Dr. Smith, John       | John  | Smith  | Dr.       |             |
+      | Smith, Mrs. Jane      | Jane  | Smith  |           | Mrs.        |
 
     Examples: Family names that are also titles
       | name           | given    | family | title | appellation |
@@ -40,6 +50,12 @@ Feature: Parse names with a title
       | name         | given | family | title | appellation |
       | Fr. Müller   |       | Müller |       | Fr.         |
       | Mx Sam Smith | Sam   | Smith  |       | Mx          |
+
+    Examples: Appellations and titles
+      | name                        | given | family  | title     | appellation |
+      | Herr Dr. Müller             |       | Müller  | Dr.       | Herr        |
+      | Frau Prof. Dr. Anna Schmidt | Anna  | Schmidt | Prof. Dr. | Frau        |
+      | Müller, Herr Dr. Hans       | Hans  | Müller  | Dr.       | Herr        |
 
   Scenario Outline: Adding titles
     Given I add "<word>" to the <list>
