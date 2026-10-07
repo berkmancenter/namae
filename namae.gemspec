@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
     --main README.md
     --exclude lib/namae/parser.rb
   }
-  s.extra_rdoc_files = %w{README.md BDSL AGPL}
+  s.extra_rdoc_files = %w{README.md AGPL BSDL}
 
   s.files = `git ls-files -- lib`.split("\n") + %w[AGPL BSDL README.md]
 end
