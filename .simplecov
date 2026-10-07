@@ -11,9 +11,9 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::LcovFormatter
 ])
 
-SimpleCov.start do
-  add_filter 'spec/'
-  add_filter 'features/'
+SimpleCov.configure do
+  skip 'spec/'
+  skip 'features/'
 
   enable_coverage :branch
 end

@@ -6,8 +6,7 @@ cultural backgrounds and tries to split them into their component parts
 
 [![CI](https://github.com/berkmancenter/namae/actions/workflows/ci.yml/badge.svg)](https://github.com/berkmancenter/namae/actions/workflows/ci.yml)
 [![Coverage](https://coveralls.io/repos/github/berkmancenter/namae/badge.svg?branch=master)](https://coveralls.io/github/berkmancenter/namae?branch=master)
-[![Gem Version](https://badge.fury.io/rb/namae.svg)](http://badge.fury.io/rb/namae)
-[![Code Climate](https://codeclimate.com/github/berkmancenter/namae/badges/gpa.svg)](https://codeclimate.com/github/berkmancenter/namae)
+[![Gem Version](https://badge.fury.io/rb/namae.svg)](https://badge.fury.io/rb/namae)
 
 Quickstart
 ----------
@@ -165,7 +164,7 @@ possible without the need for sophisticated or large dictionary based
 language-detection or word segmentation features.
 
 For further reading, see the W3C's primer on
-[Personal Names Around the World](http://www.w3.org/International/questions/qa-personal-names).
+[Personal Names Around the World](https://www.w3.org/International/questions/qa-personal-names).
 
 Development
 -----------
@@ -174,12 +173,14 @@ You can check out a copy of the latest code using Git:
 
     $ git clone https://github.com/berkmancenter/namae.git
 
-To get started, generate the parser and run all tests:
+To get started, install the dependencies and run all tests:
 
     $ cd namae
     $ bundle install
-    $ bundle exec rake features
-    $ bundle exec rake spec
+    $ bundle exec rake
+
+If you change the grammar in `lib/namae/parser.y`,
+regenerate the parser with `bundle exec rake racc`.
 
 If you've found a bug or have a question, please open an issue on the
 [issue tracker](https://github.com/berkmancenter/namae/issues). Or, for extra

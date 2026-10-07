@@ -2,7 +2,7 @@
 
 require 'bundler'
 begin
-  Bundler.setup(:default, :development, :debug, :test)
+  Bundler.setup
 rescue Bundler::BundlerError => e
   $stderr.puts e.message
   $stderr.puts "Run `bundle install` to install missing gems"
@@ -27,11 +27,3 @@ require 'cucumber/rake/task'
 Cucumber::Rake::Task.new(:features)
 
 task :default => [:spec, :features]
-
-begin
-  require 'coveralls/rake/task'
-  Coveralls::RakeTask.new
-  task :test_with_coveralls => [:spec, :features, 'coveralls:push']
-rescue LoadError
-  # ignore
-end

@@ -21,7 +21,8 @@ Gem::Specification.new do |s|
     parts (e.g., given and family names, honorifics etc.).
   }.gsub(/\s+/, ' ')
 
-  s.add_runtime_dependency('racc', '~> 1.7')
+  s.required_ruby_version = '>= 3.1'
+  s.add_dependency('racc', '~> 1.7')
 
   s.require_path = 'lib'
 
@@ -34,18 +35,5 @@ Gem::Specification.new do |s|
   }
   s.extra_rdoc_files = %w{README.md AGPL}
 
-  s.files =
-    `git ls-files`.split("\n") -
-      `git ls-files features spec .github`.split("\n") - %w{
-        .codeclimate.yml
-        .coveralls.yml
-        .gitignore
-        .rspec
-        .rubocop.yml
-        .simplecov
-        Gemfile
-        Rakefile
-        cucumber.yml
-        namae.gemspec
-      }
+  s.files = `git ls-files -- lib`.split("\n") + %w[AGPL BSDL README.md]
 end

@@ -1,9 +1,9 @@
 begin
   require 'simplecov'
-  require 'coveralls' if ENV['CI']
+  SimpleCov.start
 rescue LoadError
   # ignore
-end unless RUBY_VERSION < '1.9'
+end
 
 begin
   require 'debug' 
